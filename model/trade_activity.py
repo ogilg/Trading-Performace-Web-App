@@ -1,3 +1,5 @@
+from model.trade import Trade
+
 class TradeActivity:
     def __init__(self, trades_list):
         self.trades_list = trades_list
