@@ -14,5 +14,5 @@ class Trade:
 
     def calculate_profit(self):
         self.profit = self.get_exit_amount() - self.entry_amount
-        self.win = self.profit > 0
+        self.win = self.profit > 0  
 

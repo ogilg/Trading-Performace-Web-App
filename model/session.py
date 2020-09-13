@@ -1,3 +1,5 @@
+from model.trade import Trade
+
 class TradingSession:
     def __init__(self, trades_list, start_date, end_date):
         self.trades_list = trades_list
