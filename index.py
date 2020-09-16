@@ -11,12 +11,12 @@ pages = [overview, win_loss, reward_risk, exit_quality, upload_trades]
 
 page_links = []
 for page_name in pages:
-    page_links.append(dbc.NavLink(page_name.page.name, href=page_name.page.path, id=page_name.page.id))
+    page_links.append(dbc.NavLink(page_name.page.name, href=page_name.page.path, id=page_name.page.id, style = {'color':'white'}))
     page_links.append(html.Br())
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    "top": 55,
+    "top": 59,
     "left": 0,
     "bottom": 0,
     "width": "13rem",
@@ -27,7 +27,7 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "15rem",
+    "margin-left": "12rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
 }
@@ -41,6 +41,7 @@ sidebar = html.Div(
             page_links,
             vertical=True,
             pills=True,
+
         ),
     ],
     style=SIDEBAR_STYLE,
@@ -54,12 +55,11 @@ app.layout = html.Div([dcc.Location(id="url"), navbar, sidebar, content])
 
 
 
-# @app.callback(
-#     Output('overview', 'active'),
-#     [Input('url', 'pathname')])
-# def toggle_active_links(pathname):
-#     print("toggle", pathname)
-#     return map(lambda path : path == pathname, pages)
+@app.callback(
+    [Output(page_name.page.id, 'active') for page_name in pages],
+    [Input('url', 'pathname')])
+def toggle_active_links(pathname):
+    return [pathname == page_name.page.path for page_name in pages]
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
@@ -71,7 +71,5 @@ def display_page(pathname):
             return page_name.page.layout
     return '404'
 
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
 if __name__ == "__main__":
     app.run_server(port=8888)
