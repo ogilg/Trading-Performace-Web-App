@@ -19,7 +19,7 @@ SIDEBAR_STYLE = {
     "top": 55,
     "left": 0,
     "bottom": 0,
-    "width": "20rem",
+    "width": "13rem",
     "padding": "1rem 1rem",
     "background-color": "#1218de",
 }
@@ -34,7 +34,7 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H4("Trade Performance Analysis", className="display-4", style={'color':'white'}),
+        html.H5("Trade Performance Analysis", className="display-5", style={'color':'white'}),
         html.Hr(),
 
         dbc.Nav(
@@ -44,6 +44,7 @@ sidebar = html.Div(
         ),
     ],
     style=SIDEBAR_STYLE,
+    className="pretty_container",
 )
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
