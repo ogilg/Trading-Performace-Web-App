@@ -1,4 +1,3 @@
-import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
@@ -10,21 +9,10 @@ page.set_path('/pages/win-loss')
 
 page.layout = html.Div(
     [
-        dbc.Row([
-            dbc.Col(
-                    html.Div(
-                        [
-                            html.H1(
-                                page.name,
-                                style={"margin-bottom": "10px"},
-                            ),
-                        ],
-                id="title",),
-                width=4,
-                )
-            ]
+        html.H1(
+            page.name,
+            style={"margin-bottom": "10px"},
         ),
-
         dbc.Row(
             [
                 dbc.Col(html.Div(
@@ -34,8 +22,8 @@ page.layout = html.Div(
                     ),
                 ),
                 dbc.Col(html.Div(
-                        [html.H6(id="gasText"), html.P("Gas")],
-                        id="gas",
+                        [html.H6(id="expectancy"), html.P("Expectancy")],
+                        id="expectancy",
                         className="mini_container",
                     ),
                 ),
@@ -58,5 +46,13 @@ page.layout = html.Div(
 )
 def update_well_text(pathname):
     return 56
+
+# Selectors -> well text
+@app.callback(
+    Output("expectancy", "children"),
+    [Input('url', 'pathname')],
+)
+def update_well_text(pathname):
+    return 567
 
 

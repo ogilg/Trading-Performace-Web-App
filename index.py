@@ -4,9 +4,15 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 from app import app
-from pages import overview, win_loss, reward_risk, exit_quality
+from pages import overview, win_loss, reward_risk, exit_quality, upload_trades
 from navbar import navbar
 
+pages = [overview, win_loss, reward_risk, exit_quality, upload_trades]
+
+page_links = []
+for page_name in pages:
+    page_links.append(dbc.NavLink(page_name.page.name, href=page_name.page.path, id=page_name.page.id))
+    page_links.append(html.Br())
 
 SIDEBAR_STYLE = {
     "position": "fixed",
@@ -21,7 +27,7 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "18rem",
+    "margin-left": "15rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
 }
@@ -32,15 +38,7 @@ sidebar = html.Div(
         html.Hr(),
 
         dbc.Nav(
-            [
-                dbc.NavLink(overview.page.name, href=overview.page.path, id=overview.page.id),
-                html.Br(),
-                dbc.NavLink(win_loss.page.name, href=win_loss.page.path, id=win_loss.page.id),
-                html.Br(),
-                dbc.NavLink(reward_risk.page.name, href=reward_risk.page.path, id=reward_risk.page.id),
-                html.Br(),
-                dbc.NavLink(exit_quality.page.name, href=exit_quality.page.path, id=exit_quality.page.id),
-            ],
+            page_links,
             vertical=True,
             pills=True,
         ),
@@ -52,7 +50,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), navbar, sidebar, content])
 
-pages = ['/','/pages/overview', '/pages/page-2']
+
 
 
 # @app.callback(
@@ -67,16 +65,10 @@ pages = ['/','/pages/overview', '/pages/page-2']
 def display_page(pathname):
     if pathname == '/':
         return html.P("Choose a page")
-    elif pathname == overview.page.path:
-        return overview.page.layout
-    elif pathname == win_loss.page.path:
-        return win_loss.page.layout
-    elif pathname == reward_risk.page.path:
-        return reward_risk.page.layout
-    elif pathname == exit_quality.page.path:
-        return exit_quality.page.layout
-    else:
-        return '404'
+    for page_name in pages:
+        if page_name.page.path == pathname:
+            return page_name.page.layout
+    return '404'
 
 # if __name__ == '__main__':
 #     app.run_server(debug=True)
