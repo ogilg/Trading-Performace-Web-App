@@ -5,16 +5,17 @@ import dash_bootstrap_components as dbc
 
 from app import app
 from pages import overview, win_loss, reward_risk, exit_quality
+from navbar import navbar
 
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    "top": 0,
+    "top": 55,
     "left": 0,
     "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
-    "background-color": "#faf8f8",
+    "width": "20rem",
+    "padding": "1rem 1rem",
+    "background-color": "#1218de",
 }
 
 # the styles for the main content position it to the right of the sidebar and
@@ -27,7 +28,7 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("Sidebar", className="display-4"),
+        html.H4("Trade Performance Analysis", className="display-4", style={'color':'white'}),
         html.Hr(),
 
         dbc.Nav(
@@ -49,17 +50,17 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), navbar, sidebar, content])
 
 pages = ['/','/pages/overview', '/pages/page-2']
 
 
-@app.callback(
-    Output('overview', 'active'),
-    [Input('url', 'pathname')])
-def toggle_active_links(pathname):
-    print("toggle", pathname)
-    return map(lambda path : path == pathname, pages)
+# @app.callback(
+#     Output('overview', 'active'),
+#     [Input('url', 'pathname')])
+# def toggle_active_links(pathname):
+#     print("toggle", pathname)
+#     return map(lambda path : path == pathname, pages)
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
