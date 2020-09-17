@@ -7,15 +7,95 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-
+from dash_table.Format import Format, Scheme, Sign, Symbol
 import pandas as pd
 from app import app
 from pages.page import Page
+from collections import OrderedDict
 
 page = Page('Upload-Trades')
 page.set_path(('/pages/upload-trades'))
 
-page.layout = html.Div([
+sample_trades = pd.DataFrame(OrderedDict([
+    ('STOCK_CODE', ['TSLA', 'AAPL', 'BP']),
+    ('BUY_DATE', ['2020-03-13', '2019-09-13', '2015-12-18']),
+    ('BUY_PRICE', [109.32, 54.69, 30.15]),
+    ('SELL_DATE', ['2020-08-11', '2020-08-06', '2020-06-05']),
+    ('SELL_PRICE', [274.88, 113.90, 27.71])
+]))
+
+trade_table = html.Div([
+
+    dash_table.DataTable(
+        id='adding-rows-table',
+        data=sample_trades.to_dict('rows'),
+        columns=[{
+            'id': 'STOCK_CODE',
+            'name': 'Stock code',
+            'type': 'text',
+        }, {
+            'id': 'BUY_DATE',
+            'name': 'Buy date',
+            'type': 'datetime'
+        }, {
+            'id': 'BUY_PRICE',
+            'name': u'Buy Price',
+            'type': 'numeric',
+            'format': Format(
+                nully='N/A',
+                precision=2,
+                scheme=Scheme.fixed,
+                sign=Sign.parantheses,
+                symbol=Symbol.yes,
+                symbol_suffix=u'£'
+            ),
+            'on_change': {
+                'action': 'coerce',
+                'failure': 'default'
+            },
+            'validation': {
+                'default': None
+            }
+        }, {
+            'id': 'SELL_DATE',
+            'name': 'Sell date',
+            'type': 'datetime',
+        },{
+            'id': 'SELL_PRICE',
+            'name': u'Sell price',
+            'type': 'numeric',
+            'format': Format(
+                nully='N/A',
+                precision=2,
+                scheme=Scheme.fixed,
+                sign=Sign.parantheses,
+                symbol=Symbol.yes,
+                symbol_suffix=u'£'
+            ),
+            'on_change': {
+                'action': 'coerce',
+                'failure': 'default'
+            },
+            'validation': {
+                'default': None
+            }
+        }],
+        editable=True,
+        row_deletable=True,
+        style_cell={'padding': '5px', 'border': '1px solid black'},
+        style_header={
+            'backgroundColor': 'red',
+            'fontWeight': 'bold',
+            'fontColor': 'white',
+            #'border': '2px solid black',
+    },
+    ),
+
+    html.Button('Add Row', id='editing-rows-button', n_clicks=0),
+
+])
+
+trade_upload = html.Div([
     dcc.Upload(
         id='upload-data',
         children=html.Div([
@@ -36,6 +116,11 @@ page.layout = html.Div([
         multiple=True
     ),
     html.Div(id='output-data-upload'),
+    ])
+
+page.layout = html.Div([
+    trade_table,
+    trade_upload
 ])
 
 
