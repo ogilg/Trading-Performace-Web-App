@@ -23,19 +23,15 @@ sample_trades = pd.DataFrame(OrderedDict([
     ('SELL_DATE', ['2020-08-11', '2020-08-06', '2020-06-05']),
     ('SELL_PRICE', [274.88, 113.90, 27.71])
 ]))
+current_data = sample_trades
 
-trade_table = html.Div([
-
-    dash_table.DataTable(
-        id='adding-rows-table',
-        data=sample_trades.to_dict('rows'),
-        columns=[{
+sample_columns=[{
             'id': 'STOCK_CODE',
             'name': 'Stock code',
-            'type': 'text',
+            'type': 'text'
         }, {
             'id': 'BUY_DATE',
-            'name': 'Buy date',
+            'name': 'Buy date (YYYY-MM-DD)',
             'type': 'datetime'
         }, {
             'id': 'BUY_PRICE',
@@ -58,7 +54,7 @@ trade_table = html.Div([
             }
         }, {
             'id': 'SELL_DATE',
-            'name': 'Sell date',
+            'name': 'Sell date (YYYY-MM-DD)',
             'type': 'datetime',
         },{
             'id': 'SELL_PRICE',
@@ -80,19 +76,30 @@ trade_table = html.Div([
                 'default': None
             }
         }],
-        editable=True,
-        row_deletable=True,
-        style_cell={'padding': '5px', 'border': '1px solid black'},
-        style_header={
-            'backgroundColor': 'red',
-            'fontWeight': 'bold',
-            'fontColor': 'white',
-            #'border': '2px solid black',
-    },
+
+trade_table = html.Div([
+    dcc.Markdown('''
+    >
+    > Please input your portfolio positions:
+    >
+    '''),
+    html.Div(
+        [
+        dash_table.DataTable(
+            id='trades-table',
+            data=sample_trades.to_dict('rows'),
+            columns=sample_columns,
+            editable=True,
+            row_deletable=True,
+            style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
+                        'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
+            style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white', 'textAlign': 'center',
+                           'font_family': 'arial', 'font_size': '14px'},  # Style the header
+            page_current=0, # page number that user is on
+            page_size=20  #Max amount of rows per page,
+    ),],
     ),
-
     html.Button('Add Row', id='editing-rows-button', n_clicks=0),
-
 ])
 
 trade_upload = html.Div([
@@ -115,18 +122,18 @@ trade_upload = html.Div([
         # Allow multiple files to be uploaded
         multiple=True
     ),
-    html.Div(id='output-data-upload'),
     ])
 
 page.layout = html.Div([
     trade_table,
+    html.Br(),
+    html.H4("Upload excel sheet"),
     trade_upload
 ])
 
 
-def parse_contents(contents, filename, date):
+def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
-
     decoded = base64.b64decode(content_string)
     try:
         if 'csv' in filename:
@@ -141,35 +148,25 @@ def parse_contents(contents, filename, date):
         return html.Div([
             'There was an error processing this file.'
         ])
-
-    return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
-
-        dash_table.DataTable(
-            data=df.to_dict('records'),
-            columns=[{'name': i, 'id': i} for i in df.columns]
-        ),
-
-        html.Hr(),  # horizontal line
-
-        # For debugging, display the raw contents provided by the web browser
-        html.Div('Raw Content'),
-        html.Pre(contents[0:200] + '...', style={
-            'whiteSpace': 'pre-wrap',
-            'wordBreak': 'break-all'
-        })
-    ])
+    return df
 
 
-@app.callback(Output('output-data-upload', 'children'),
+@app.callback([Output('trades-table', 'data'), Output('trades-table', 'columns')],
               [Input('upload-data', 'contents')],
-              [State('upload-data', 'filename'),
-               State('upload-data', 'last_modified')])
-def update_output(list_of_contents, list_of_names, list_of_dates):
+              [State('upload-data', 'filename')])
+def update_table(list_of_contents, list_of_names):
     if list_of_contents is not None:
-        children = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(list_of_contents, list_of_names, list_of_dates)]
-        return children
+        spreadsheet_data = [parse_contents(c, n) for c, n in zip(list_of_contents, list_of_names)][0]
+        df = spreadsheet_data
+        current_data = df
+        columns = [{'name': i, 'id': i} for i in df.columns]
+        return df.to_dict('records'), columns
 
+
+# @app.callback(
+#     Output('trades-table', 'data'),
+#     [State('trades-table', 'data'),
+#      State('trades-table', 'columns')])
+# def add_row(rows, columns):
+#     rows.append({c['id']: '' for c in columns})
+#     return rows

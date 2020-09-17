@@ -28,23 +28,17 @@ page.layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(html.Div(
-                    [html.H6(id="win_rate"), html.P("Win Rate")],
+                    [html.H3(id="win_rate"), html.P("Win Rate")],
                         id="win_rate",
                         className="mini_container",
                     ),
                 ),
                 dbc.Col(html.Div(
-                        [html.H6(id="expectancy"), html.P("Expectancy")],
+                        [html.H3(id="expectancy"), html.P("Expectancy")],
                         id="expectancy",
                         className="mini_container",
                     ),
                 ),
-                dbc.Col(html.Div(
-                        [html.H6(id="oilText"), html.P("Oil")],
-                        id="oil",
-                        className="mini_container",
-                    ),
-                )
             ]
         ),
 

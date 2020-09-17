@@ -41,7 +41,6 @@ sidebar = html.Div(
             page_links,
             vertical=True,
             pills=True,
-
         ),
     ],
     style=SIDEBAR_STYLE,
@@ -51,8 +50,6 @@ sidebar = html.Div(
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), navbar, sidebar, content])
-
-
 
 
 @app.callback(
