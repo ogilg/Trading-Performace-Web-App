@@ -2,10 +2,10 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_table
-import dash_core_components as dcc
 from dash_table.Format import Format, Scheme, Sign, Symbol
 import pandas as pd
 from collections import OrderedDict
+import dash_core_components as dcc
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__,external_stylesheets=external_stylesheets )
@@ -18,9 +18,12 @@ df_typing_formatting = pd.DataFrame(OrderedDict([
     ('SELL_PRICE', [274.88, 113.90, 27.71])
 ]))
 
-
-
 app.layout = html.Div([
+    dcc.Markdown('''
+    >
+    > Please input your portfolio positions:
+    >
+    '''),
 
     dash_table.DataTable(
         id='adding-rows-table',
@@ -28,10 +31,10 @@ app.layout = html.Div([
         columns=[{
             'id': 'STOCK_CODE',
             'name': 'Stock code',
-            'type': 'text',
+            'type': 'text'
         }, {
             'id': 'BUY_DATE',
-            'name': 'Buy date',
+            'name': 'Buy date (YYYY-MM-DD)',
             'type': 'datetime'
         }, {
             'id': 'BUY_PRICE',
@@ -54,7 +57,7 @@ app.layout = html.Div([
             }
         }, {
             'id': 'SELL_DATE',
-            'name': 'Sell date',
+            'name': 'Sell date (YYYY-MM-DD)',
             'type': 'datetime',
         },{
             'id': 'SELL_PRICE',
@@ -78,17 +81,15 @@ app.layout = html.Div([
         }],
         editable=True,
         row_deletable=True,
-        style_cell={'padding': '5px', 'border': '1px solid black'},
-        style_header={
-            'backgroundColor': 'red',
-            'fontWeight': 'bold',
-            'fontColor': 'white',
-            #'border': '2px solid black',
-    },
+        style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
+                    'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
+        style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white', 'textAlign': 'center',
+                       'font_family': 'arial', 'font_size': '14px'},  # Style the header
+        page_current=0, # page number that user is on
+        page_size=10  #Max amount of rows per page,
     ),
 
     html.Button('Add Row', id='editing-rows-button', n_clicks=0),
-
 ])
 
 @app.callback(
@@ -100,7 +101,6 @@ def add_row(n_clicks, rows, columns):
     if n_clicks > 0:
         rows.append({c['id']: '' for c in columns})
     return rows
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
