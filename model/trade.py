@@ -42,4 +42,13 @@ class Trade:
 
 
 
+example_trade = Trade('GOOG', 01-01-2020, 01-02-2020)
+
+print(example_trade.asset_name) # should print 'GOOG'
+example_trade.set_entry_amount(100)
+print(example_trade.entry_capital) # should print 100
+
+
+
+
 
