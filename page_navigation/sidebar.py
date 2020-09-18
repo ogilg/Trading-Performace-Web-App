@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 
-from pages import overview, win_loss, reward_risk, exit_quality, upload_trades
+from pages import overview, win_loss, reward_risk, exit_quality
 
 
 class SideBar:
@@ -52,9 +52,8 @@ SIDEBAR_STYLE = {
     "padding": "1rem 1rem",
     "background-color": "#1218de",
 }
-pages = [overview, win_loss, reward_risk, exit_quality, upload_trades]
+pages = [overview, win_loss, reward_risk, exit_quality]
 
 sidebar = SideBar(SIDEBAR_STYLE)
 sidebar.set_pages(pages)
 sidebar.create_layout()
-

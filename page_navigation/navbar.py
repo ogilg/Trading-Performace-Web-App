@@ -5,6 +5,7 @@ from PIL import Image
 GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
 from pages import overview, upload_trades
 
+
 class NavBar:
     def __init__(self, style, columns_style):
         self.style = style
@@ -19,8 +20,9 @@ class NavBar:
         self.columns = [dbc.Col(html.A(html.Img(src=GAMMA_IMAGE, height="35px"), href="https://icons8.com", ))]
         for main_page_key in self.main_pages:
             self.columns.append(dbc.Col(
-                dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path, style=self.columns_style)),
-                width = 30
+                dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path,
+                                        style=self.columns_style)),
+                width=30
             ))
         return self.columns
 
@@ -41,7 +43,6 @@ class NavBar:
     def create_layout(self):
         columns = self.create_columns()
         self.layout = self.get_layout_html(columns)
-
 
     def get_layout_html(self, columns):
         layout = dbc.Navbar(
@@ -64,17 +65,16 @@ class NavBar:
         return layout
 
 
-style={
-        'top': 0,
-        'left':0,
-        "position": "fixed",
-        'width' : '100%',
-        'height': '8%',
-    }
-columns_style = {'color': 'white', 'fontSize': 20, 'padding-bottom': '12    %', 'padding-left': '100px'}
-main_pages = {'Analysis' : overview, 'Journal' : upload_trades}
+style = {
+    'top': 0,
+    'left': 0,
+    "position": "fixed",
+    'width': '100%',
+    'height': '8%',
+}
+columns_style = {'color': 'white', 'fontSize': 20, 'padding-bottom': '8%', 'padding-left': '100px'}
+main_pages = {'Performance Analysis': overview, ' Trading Journal': upload_trades}
 
 navbar = NavBar(style, columns_style)
 navbar.set_main_pages(main_pages)
 navbar.create_layout()
-

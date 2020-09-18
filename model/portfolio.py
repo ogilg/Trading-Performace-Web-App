@@ -1,4 +1,3 @@
-from model.trade import Trade
 from model.return_metrics import calculate_rate_of_return
 
 '''
@@ -6,7 +5,8 @@ from model.return_metrics import calculate_rate_of_return
     ratios
 '''
 
-#Stores a list of trades and calculates metrics with them
+
+# Stores a list of trades and calculates metrics with them
 class Portfolio:
     def __init__(self, trades_list):
         self.trade_list = trades_list

@@ -1,7 +1,6 @@
-import dash_core_components as dcc
 import dash_html_components as html
-from pages.page import Page
 
+from pages.page import Page
 
 page = Page('Overview')
 page.set_path('/pages/overview')
@@ -11,8 +10,4 @@ page.layout = html.Div(children=[
     html.Div(children='''
             Trading activity overview.
         '''),
-    html.Br(),
-    dcc.Link('Go to Page 2', href='page-2'),
-    html.Br(),
-    dcc.Link('Go back to index', href='/'),
-    ])
+])
