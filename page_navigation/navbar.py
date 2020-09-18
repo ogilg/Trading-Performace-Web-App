@@ -16,10 +16,12 @@ class NavBar:
         self.main_pages = main_pages
 
     def create_columns(self):
-        self.columns = [dbc.Col(html.A(html.Img(src=GAMMA_IMAGE, height="40px"), href="https://icons8.com", ))]
+        self.columns = [dbc.Col(html.A(html.Img(src=GAMMA_IMAGE, height="35px"), href="https://icons8.com", ))]
         for main_page_key in self.main_pages:
             self.columns.append(dbc.Col(
-                dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path, style=self.columns_style))))
+                dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path, style=self.columns_style)),
+                width = 30
+            ))
         return self.columns
 
     def create_search_bar(self):
@@ -69,7 +71,7 @@ style={
         'width' : '100%',
         'height': '8%',
     }
-columns_style = {'color': 'white', 'fontSize': 14, 'padding-bottom': '40%'}
+columns_style = {'color': 'white', 'fontSize': 20, 'padding-bottom': '12    %', 'padding-left': '100px'}
 main_pages = {'Analysis' : overview, 'Journal' : upload_trades}
 
 navbar = NavBar(style, columns_style)

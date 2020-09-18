@@ -28,6 +28,7 @@ app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, co
 def toggle_active_links(pathname):
     return [pathname == page_name.page.path for page_name in pages]
 
+
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
@@ -37,6 +38,7 @@ def display_page(pathname):
         if page_name.page.path == pathname:
             return page_name.page.layout
     return '404'
+
 
 if __name__ == "__main__":
     app.run_server(port=8888)
