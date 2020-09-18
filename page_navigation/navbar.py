@@ -1,7 +1,12 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+from dash.dependencies import Input, Output
+from PIL import Image
+from app import app
 
-PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
+GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
+from pages import overview, win_loss, reward_risk, exit_quality, upload_trades
+
 
 search_bar = dbc.Row(
     [
@@ -22,13 +27,14 @@ navbar = dbc.Navbar(
             # Use row and col to control vertical alignment of logo / brand
             dbc.Row(
                 [
-                    dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
-                    dbc.Col(dbc.NavbarBrand("Navbar", className="ml-2")),
+                    dbc.Col(html.A(html.Img(src=GAMMA_IMAGE, height="40px"),href="https://icons8.com",)),
+                    dbc.Col(
+                        dbc.NavItem(dbc.NavLink("Analysis", active = True, href=overview.page.path))
+                    ),
                 ],
                 align="center",
                 no_gutters=True,
             ),
-            href="https://plot.ly",
         ),
         dbc.NavbarToggler(id="navbar-toggler"),
         dbc.Collapse(search_bar, id="navbar-collapse", navbar=True),

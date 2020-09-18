@@ -1,17 +1,16 @@
 import base64
-import datetime
 import io
+from collections import OrderedDict
 
-import dash
-from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-from dash_table.Format import Format, Scheme, Sign, Symbol
 import pandas as pd
+from dash.dependencies import Input, Output, State
+from dash_table.Format import Format, Scheme, Sign, Symbol
+
 from app import app
 from pages.page import Page
-from collections import OrderedDict
 
 page = Page('Upload-Trades')
 page.set_path(('/pages/upload-trades'))
@@ -25,57 +24,57 @@ sample_trades = pd.DataFrame(OrderedDict([
 ]))
 current_data = sample_trades
 
-sample_columns=[{
-            'id': 'STOCK_CODE',
-            'name': 'Stock code',
-            'type': 'text'
-        }, {
-            'id': 'BUY_DATE',
-            'name': 'Buy date (YYYY-MM-DD)',
-            'type': 'datetime'
-        }, {
-            'id': 'BUY_PRICE',
-            'name': u'Buy Price',
-            'type': 'numeric',
-            'format': Format(
-                nully='N/A',
-                precision=2,
-                scheme=Scheme.fixed,
-                sign=Sign.parantheses,
-                symbol=Symbol.yes,
-                symbol_suffix=u'£'
-            ),
-            'on_change': {
-                'action': 'coerce',
-                'failure': 'default'
-            },
-            'validation': {
-                'default': None
-            }
-        }, {
-            'id': 'SELL_DATE',
-            'name': 'Sell date (YYYY-MM-DD)',
-            'type': 'datetime',
-        },{
-            'id': 'SELL_PRICE',
-            'name': u'Sell price',
-            'type': 'numeric',
-            'format': Format(
-                nully='N/A',
-                precision=2,
-                scheme=Scheme.fixed,
-                sign=Sign.parantheses,
-                symbol=Symbol.yes,
-                symbol_suffix=u'£'
-            ),
-            'on_change': {
-                'action': 'coerce',
-                'failure': 'default'
-            },
-            'validation': {
-                'default': None
-            }
-        }],
+sample_columns = [{
+    'id': 'STOCK_CODE',
+    'name': 'Stock code',
+    'type': 'text'
+}, {
+    'id': 'BUY_DATE',
+    'name': 'Buy date (YYYY-MM-DD)',
+    'type': 'datetime'
+}, {
+    'id': 'BUY_PRICE',
+    'name': u'Buy Price',
+    'type': 'numeric',
+    'format': Format(
+        nully='N/A',
+        precision=2,
+        scheme=Scheme.fixed,
+        sign=Sign.parantheses,
+        symbol=Symbol.yes,
+        symbol_suffix=u'£'
+    ),
+    'on_change': {
+        'action': 'coerce',
+        'failure': 'default'
+    },
+    'validation': {
+        'default': None
+    }
+}, {
+    'id': 'SELL_DATE',
+    'name': 'Sell date (YYYY-MM-DD)',
+    'type': 'datetime',
+}, {
+    'id': 'SELL_PRICE',
+    'name': u'Sell price',
+    'type': 'numeric',
+    'format': Format(
+        nully='N/A',
+        precision=2,
+        scheme=Scheme.fixed,
+        sign=Sign.parantheses,
+        symbol=Symbol.yes,
+        symbol_suffix=u'£'
+    ),
+    'on_change': {
+        'action': 'coerce',
+        'failure': 'default'
+    },
+    'validation': {
+        'default': None
+    }
+}],
 
 trade_table = html.Div([
     dcc.Markdown('''
@@ -85,19 +84,20 @@ trade_table = html.Div([
     '''),
     html.Div(
         [
-        dash_table.DataTable(
-            id='trades-table',
-            data=sample_trades.to_dict('rows'),
-            columns=sample_columns,
-            editable=True,
-            row_deletable=True,
-            style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
-                        'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
-            style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white', 'textAlign': 'center',
-                           'font_family': 'arial', 'font_size': '14px'},  # Style the header
-            page_current=0, # page number that user is on
-            page_size=20  #Max amount of rows per page,
-    ),],
+            dash_table.DataTable(
+                id='trades-table',
+                data=sample_trades.to_dict('rows'),
+                columns=sample_columns,
+                editable=True,
+                row_deletable=True,
+                style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
+                            'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
+                style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white',
+                              'textAlign': 'center',
+                              'font_family': 'arial', 'font_size': '14px'},  # Style the header
+                page_current=0,  # page number that user is on
+                page_size=20  # Max amount of rows per page,
+            ), ],
     ),
     html.Button('Add Row', id='editing-rows-button', n_clicks=0),
 ])
@@ -122,7 +122,7 @@ trade_upload = html.Div([
         # Allow multiple files to be uploaded
         multiple=True
     ),
-    ])
+])
 
 page.layout = html.Div([
     trade_table,
@@ -161,7 +161,6 @@ def update_table(list_of_contents, list_of_names):
         current_data = df
         columns = [{'name': i, 'id': i} for i in df.columns]
         return df.to_dict('records'), columns
-
 
 # @app.callback(
 #     Output('trades-table', 'data'),
