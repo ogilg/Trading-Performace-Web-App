@@ -19,7 +19,7 @@ CONTENT_STYLE = {
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), navbar, sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, content])
 
 
 @app.callback(
