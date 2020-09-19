@@ -13,8 +13,8 @@ from dash_table.Format import Format, Scheme, Sign, Symbol
 from app import app
 from pages.page import Page
 
-page = Page('Upload-Trades')
-page.set_path(('/pages/trade_journal'))
+page = Page('Trade-Journal')
+page.set_path(('/pages/trade-journal'))
 
 sample_trades = pd.DataFrame(OrderedDict([
     ('STOCK_CODE', ['TSLA', 'AAPL', 'BP']),
@@ -145,7 +145,7 @@ page.layout = html.Div([
     trade_uploader,
     html.Br(),
     html.H4("Upload excel sheet"),
-    trade_upload
+    trade_upload,
 ])
 
 

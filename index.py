@@ -5,9 +5,11 @@ from dash.dependencies import Input, Output
 from app import app
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
-from pages import overview, win_loss, reward_risk, exit_quality, trade_journal
+from pages import trade_journal
+from pages.analysis import overview, exit_quality, reward_risk, win_loss
 
 pages = [overview, win_loss, reward_risk, exit_quality, trade_journal]
+analysis_pages = [overview, win_loss, reward_risk, exit_quality]
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
@@ -23,10 +25,10 @@ app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, co
 
 
 @app.callback(
-    [Output(page_name.page.id, 'active') for page_name in pages],
+    [Output(page_name.page.id, 'active') for page_name in analysis_pages],
     [Input('url', 'pathname')])
 def toggle_active_links(pathname):
-    return [pathname == page_name.page.path for page_name in pages]
+    return [pathname == page_name.page.path for page_name in analysis_pages]
 
 
 @app.callback(Output('page-content', 'children'),
