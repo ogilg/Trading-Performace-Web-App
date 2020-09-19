@@ -8,7 +8,7 @@ from collections import OrderedDict
 import dash_core_components as dcc
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__,external_stylesheets=external_stylesheets )
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, title='Data input page')
 
 df_typing_formatting = pd.DataFrame(OrderedDict([
     ('STOCK_CODE', ['TSLA', 'AAPL', 'BP']),
@@ -20,10 +20,10 @@ df_typing_formatting = pd.DataFrame(OrderedDict([
 
 app.layout = html.Div([
     dcc.Markdown('''
-    >
-    > Please input your portfolio positions:
-    >
-    '''),
+>
+> Please input your portfolio positions:
+>
+''', style={'font-family': 'arial'}),
 
     dash_table.DataTable(
         id='adding-rows-table',
@@ -82,25 +82,36 @@ app.layout = html.Div([
         editable=True,
         row_deletable=True,
         style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
-                    'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
-        style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white', 'textAlign': 'center',
-                       'font_family': 'arial', 'font_size': '14px'},  # Style the header
+                    'font_family': 'Arial', 'font_size': '12px', 'backgroundColor': 'ghostwhite'},  # Style the cells
+        style_header={'backgroundColor': 'darkseagreen', 'fontWeight': 'bold', 'color': 'black', 'textAlign': 'center',
+                       'font_family': 'arial', 'font_size': '14px', 'border': '2px solid black'},  # Style the header
         page_current=0, # page number that user is on
-        page_size=10  #Max amount of rows per page,
+        page_size=10  # Max amount of rows per page,
     ),
 
-    html.Button('Add Row', id='editing-rows-button', n_clicks=0),
+    html.Button('Add Row', id='editing-rows-button', n_clicks=0, style={'font_family': 'arial', 'padding':'10px', 'backgroundColor': 'black','color':'white'}),
+    dcc.Markdown('''
+>
+> Please click one of the buttons below to change the colour theme:
+>
+''', style={'font-family': 'arial'}),
+    html.Button('Theme 1',id='red-theme-button', n_clicks=0, style={'font_family': 'arial', 'padding': '10px','margin': '10px'}),
+    html.Button('Theme 2',id='blue-theme-button', n_clicks=0, style={'font_family': 'arial', 'padding': '10px','margin': '10px'}),
+    html.Button('Theme 3',id='green-theme-button', n_clicks=0, style={'font_family': 'arial', 'padding': '10px','margin': '10px'}),
 ])
+
 
 @app.callback(
     Output('adding-rows-table', 'data'),
     [Input('editing-rows-button', 'n_clicks')],
     [State('adding-rows-table', 'data'),
-     State('adding-rows-table', 'columns')])
+     State('adding-rows-table', 'columns')],
+)
 def add_row(n_clicks, rows, columns):
     if n_clicks > 0:
         rows.append({c['id']: '' for c in columns})
     return rows
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
