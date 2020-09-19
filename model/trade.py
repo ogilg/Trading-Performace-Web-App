@@ -11,7 +11,7 @@ class Trade:
         # stores entry capital in class variable, it becomes accessible anywhere in the class
         self.entry_capital = entry_capital
 
-    #TODO: implement by retrieving appropraite data
+    # TODO: implement by retrieving appropraite data
     def get_exit_capital(self):
         # Use stock data to calculate
         self.exit_capital = 10
@@ -25,8 +25,3 @@ class Trade:
         self.rate_of_return = calculate_rate_of_return(self.entry_capital, self.exit_capital())
         self.profit_factor = 1 + self.rate_of_return
         return self.rate_of_return
-
-
-
-
-

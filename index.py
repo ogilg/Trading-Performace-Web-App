@@ -5,9 +5,9 @@ from dash.dependencies import Input, Output
 from app import app
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
-from pages import overview, win_loss, reward_risk, exit_quality, upload_trades
+from pages import overview, win_loss, reward_risk, exit_quality, trade_journal
 
-pages = [overview, win_loss, reward_risk, exit_quality, upload_trades]
+pages = [overview, win_loss, reward_risk, exit_quality, trade_journal]
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
@@ -41,4 +41,4 @@ def display_page(pathname):
 
 
 if __name__ == "__main__":
-    app.run_server(port=8888)
+    app.run_server(port=8888, debug=True)

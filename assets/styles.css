@@ -26,6 +26,13 @@ body {
   box-shadow: 2px 2px 2px lightgrey;
 }
 
+.dropdown {
+  background-color : #efedfa;
+  box-shadow: 2px 2px 2px lightgrey;
+  width : 40%;
+
+}
+
 .bare_container {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
@@ -116,4 +123,5 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 

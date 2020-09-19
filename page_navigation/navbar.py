@@ -3,7 +3,7 @@ import dash_html_components as html
 from PIL import Image
 
 GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
-from pages import overview, upload_trades
+from pages import overview, trade_journal
 
 
 class NavBar:
@@ -73,7 +73,7 @@ style = {
     'height': '8%',
 }
 columns_style = {'color': 'white', 'fontSize': 20, 'padding-bottom': '8%', 'padding-left': '100px'}
-main_pages = {'Performance Analysis': overview, ' Trading Journal': upload_trades}
+main_pages = {'Performance Analysis': overview, ' Trading Journal': trade_journal}
 
 navbar = NavBar(style, columns_style)
 navbar.set_main_pages(main_pages)
