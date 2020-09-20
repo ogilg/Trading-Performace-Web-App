@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 
-from pages import overview, win_loss, reward_risk, exit_quality
+from pages.analysis import overview, exit_quality, reward_risk, win_loss
 
 
 class SideBar:

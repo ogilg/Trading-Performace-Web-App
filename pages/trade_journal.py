@@ -4,11 +4,12 @@ from collections import OrderedDict
 
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.exceptions import PreventUpdate
 import dash_table
 import dash
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from dash_table.Format import Format, Scheme, Sign, Symbol
+from pages.trade_data_formatting import individual_trades_columns, spreadsheet_formats, spreadsheet_format_dropdown
 
 from app import app
 from pages.page import Page
@@ -23,76 +24,7 @@ sample_trades = pd.DataFrame(OrderedDict([
     ('SELL_DATE', ['2020-08-11', '2020-08-06', '2020-06-05']),
     ('SELL_PRICE', [274.88, 113.90, 27.71])
 ]))
-current_data = sample_trades
 
-individual_trades_columns = [{
-    'id': 'STOCK_CODE',
-    'name': 'Stock code',
-    'type': 'text'
-}, {
-    'id': 'BUY_DATE',
-    'name': 'Buy date (YYYY-MM-DD)',
-    'type': 'datetime'
-},
-    {
-        'id': 'BUY_PRICE',
-        'name': u'Buy Price',
-        'type': 'numeric',
-        'format': Format(
-            nully='N/A',
-            precision=2,
-            scheme=Scheme.fixed,
-            sign=Sign.parantheses,
-            symbol=Symbol.yes,
-            symbol_suffix=u'£'
-        ),
-        'on_change': {
-            'action': 'coerce',
-            'failure': 'default'
-        },
-        'validation': {
-            'default': None
-        }
-    }, {
-        'id': 'SELL_DATE',
-        'name': 'Sell date (YYYY-MM-DD)',
-        'type': 'datetime',
-    }, {
-        'id': 'SELL_PRICE',
-        'name': u'Sell price',
-        'type': 'numeric',
-        'format': Format(
-            nully='N/A',
-            precision=2,
-            scheme=Scheme.fixed,
-            sign=Sign.parantheses,
-            symbol=Symbol.yes,
-            symbol_suffix=u'£'
-        ),
-        'on_change': {
-            'action': 'coerce',
-            'failure': 'default'
-        },
-        'validation': {
-            'default': None
-        }
-    }]
-
-spreadsheet_formats = [
-    {'label': 'Individual Trades', 'value': 'Individual Trades'},
-    {'label': 'By Session', 'value': 'By Session'}
-]
-
-spreadsheet_format_dropdown = html.Div(
-    [
-        dcc.Dropdown(
-            id='format-dropdown',
-            options=spreadsheet_formats,
-            value='Individual Trades',
-            className='dropdown',
-        )
-    ]
-)
 trades_table = dash_table.DataTable(
     id='trades-table',
     data=sample_trades.to_dict('rows'),
@@ -100,10 +32,9 @@ trades_table = dash_table.DataTable(
     editable=True,
     row_deletable=True,
     style_cell={'padding': '5px', 'border': '1px solid black', 'textAlign': 'center',
-                'font_family': 'Arial', 'font_size': '12px'},  # Style the cells
-    style_header={'backgroundColor': 'red', 'fontWeight': 'bold', 'fontColor': 'white',
-                  'textAlign': 'center',
-                  'font_family': 'arial', 'font_size': '14px'},  # Style the header
+                'font_family': 'Arial', 'font_size': '12px', 'backgroundColor': 'ghostwhite'},  # Style the cells
+    style_header={'backgroundColor': 'darkseagreen', 'fontWeight': 'bold', 'color': 'black', 'textAlign': 'center',
+                  'font_family': 'arial', 'font_size': '14px', 'border': '2px solid black'},
     page_current=0,  # page number that user is on
     page_size=20  # Max amount of rows per page,
 )
@@ -127,21 +58,20 @@ trade_upload = html.Div([
             html.A('Select Files')
         ]),
         style={
-            'width': '100%',
-            'height': '60px',
             'lineHeight': '60px',
             'borderWidth': '1px',
             'borderStyle': 'dashed',
             'borderRadius': '5px',
             'textAlign': 'center',
-            'margin': '10px'
         },
+        className='uploader',
         # Allow multiple files to be uploaded
         multiple=True
     ),
 ])
 
 page.layout = html.Div([
+    dcc.Store(id='store-trade-data', storage_type='local'),
     trade_uploader,
     html.Br(),
     html.H4("Upload excel sheet"),
@@ -169,11 +99,12 @@ def parse_contents(contents, filename):
 
 
 @app.callback(
-    [Output('trades-table', 'columns'), Output('trades-table', 'data')],
-    [Input('upload-spreadsheet', 'contents'), Input('add-rows-button', 'n_clicks'), Input('format-dropdown', 'value') ],
-    [State('trades-table', 'data'), State('trades-table', 'columns'), State('upload-spreadsheet', 'filename')]
+    [Output('trades-table', 'columns'), Output('trades-table', 'data'), Output('store-trade-data', 'data')],
+    [Input('upload-spreadsheet', 'contents'), Input('add-rows-button', 'n_clicks'), Input('format-dropdown', 'value'), Input('store-trade-data', 'modified_timestamp')],
+    [State('trades-table', 'data'), State('trades-table', 'columns'), State('upload-spreadsheet', 'filename'), State('store-trade-data', 'data')]
 )
-def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, current_trade_data, current_trade_data_columns, uploaded_filenames):
+def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, stored_data_timestamp, current_trade_data,
+                       current_trade_data_columns, uploaded_filenames, stored_data):
     context = dash.callback_context
 
     if not context.triggered:
@@ -188,7 +119,7 @@ def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, curr
         if uploaded_spreadsheets is not None:
             spreadsheet_data = [parse_contents(c, n) for c, n in zip(uploaded_spreadsheets, uploaded_filenames)][0]
             current_trade_data = spreadsheet_data.to_dict('records')
-            current_trade_data_columns = [{'name': i, 'id': i} for i in spreadsheet_data.columns]
+            current_trade_data_columns = get_columns_from_dict(current_trade_data)
 
     elif input_id == 'format-dropdown':
         if column_format == 'Individual Trades':
@@ -196,6 +127,16 @@ def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, curr
         else:
             current_trade_data_columns = [{'name': str(i), 'id': str(i)} for i in range(5)]
 
-    return current_trade_data_columns, current_trade_data
+    elif input_id == 'store-trade-data':
+        if stored_data_timestamp is None:
+            raise PreventUpdate
+        current_trade_data = stored_data or {}
+        current_trade_data_columns = get_columns_from_dict(current_trade_data)
 
 
+
+    return current_trade_data_columns, current_trade_data, current_trade_data
+
+
+def get_columns_from_dict(dicts):
+    return [{'name': str(i), 'id': str(i)} for i in dicts[0]]

@@ -34,3 +34,11 @@ class Portfolio:
 
     def calculate_total_profit(self):
         return sum(self.profits)
+
+
+    # FILTERING
+    def get_trades_by_asset(self, asset):
+        return filter(lambda trade : trade.asset == asset, self.trade_list)
+
+    def get_trades_by_session(self, session_id):
+        return filter(lambda trade : trade.session_id == session_id, self.trade_list)

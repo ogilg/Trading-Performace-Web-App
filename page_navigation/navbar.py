@@ -3,7 +3,8 @@ import dash_html_components as html
 from PIL import Image
 
 GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
-from pages import overview, trade_journal
+from pages import trade_journal
+from pages.analysis import overview
 
 
 class NavBar:
