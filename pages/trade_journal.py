@@ -9,13 +9,13 @@ import dash_table
 import dash
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pages.trade_data_formatting import individual_trades_columns, spreadsheet_formats, spreadsheet_format_dropdown
+from pages.trade_data_formatting import individual_trades_columns
 
 from app import app
 from pages.page import Page
 
 page = Page('Trade-Journal')
-page.set_path(('/pages/trade-journal'))
+page.set_path('/pages/trade-journal')
 
 sample_trades = pd.DataFrame(OrderedDict([
     ('STOCK_CODE', ['TSLA', 'AAPL', 'BP']),
@@ -44,7 +44,6 @@ trade_uploader = html.Div([
     > Please input your portfolio positions:
     >
     '''),
-    spreadsheet_format_dropdown,
     html.Br(),
     html.Div([trades_table, ], ),
     html.Button('Add Row', id='add-rows-button', n_clicks=0),
@@ -76,6 +75,7 @@ page.layout = html.Div([
     html.Br(),
     html.H4("Upload excel sheet"),
     trade_upload,
+    html.Div(id='trade-data-length')
 ])
 
 
@@ -100,10 +100,10 @@ def parse_contents(contents, filename):
 
 @app.callback(
     [Output('trades-table', 'columns'), Output('trades-table', 'data'), Output('store-trade-data', 'data')],
-    [Input('upload-spreadsheet', 'contents'), Input('add-rows-button', 'n_clicks'), Input('format-dropdown', 'value'), Input('store-trade-data', 'modified_timestamp')],
+    [Input('upload-spreadsheet', 'contents'), Input('add-rows-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
     [State('trades-table', 'data'), State('trades-table', 'columns'), State('upload-spreadsheet', 'filename'), State('store-trade-data', 'data')]
 )
-def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, stored_data_timestamp, current_trade_data,
+def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timestamp, current_trade_data,
                        current_trade_data_columns, uploaded_filenames, stored_data):
     context = dash.callback_context
 
@@ -121,22 +121,26 @@ def update_trade_table(uploaded_spreadsheets, add_row_click, column_format, stor
             current_trade_data = spreadsheet_data.to_dict('records')
             current_trade_data_columns = get_columns_from_dict(current_trade_data)
 
-    elif input_id == 'format-dropdown':
-        if column_format == 'Individual Trades':
-            current_trade_data_columns = individual_trades_columns
-        else:
-            current_trade_data_columns = [{'name': str(i), 'id': str(i)} for i in range(5)]
-
     elif input_id == 'store-trade-data':
-        if stored_data_timestamp is None:
+        if stored_data_timestamp is None or stored_data is None:
             raise PreventUpdate
-        current_trade_data = stored_data or {}
+        current_trade_data = stored_data
         current_trade_data_columns = get_columns_from_dict(current_trade_data)
 
-
-
-    return current_trade_data_columns, current_trade_data, current_trade_data
+    return current_trade_data_columns, current_trade_data, current_trade_data,
 
 
 def get_columns_from_dict(dicts):
     return [{'name': str(i), 'id': str(i)} for i in dicts[0]]
+
+# @app.callback(
+#     Output('trade-data-length', 'children'),
+#     [Input('store-trade-data', 'modified_timestamp')],
+#     [State('store-trade-data', 'data')]
+# )
+# def store_data_length(ts, data):
+#     if ts is None:
+#         raise PreventUpdate
+#
+#
+#     return len(data)

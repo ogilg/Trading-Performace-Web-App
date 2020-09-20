@@ -1,6 +1,4 @@
 from dash_table.Format import Format, Scheme, Sign, Symbol
-import dash_core_components as dcc
-import dash_html_components as html
 
 individual_trades_columns = [{
     'id': 'STOCK_CODE',
@@ -54,20 +52,3 @@ individual_trades_columns = [{
             'default': None
         }
     }]
-
-spreadsheet_formats = [
-    {'label': 'Individual Trades', 'value': 'Individual Trades'},
-    {'label': 'By Session', 'value': 'By Session'}
-]
-
-
-spreadsheet_format_dropdown = html.Div(
-    [
-        dcc.Dropdown(
-            id='format-dropdown',
-            options=spreadsheet_formats,
-            value='Individual Trades',
-            className='dropdown',
-        )
-    ]
-)
