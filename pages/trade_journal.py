@@ -1,7 +1,5 @@
 import base64
 import io
-import time
-from collections import OrderedDict
 
 import dash_core_components as dcc
 import dash_html_components as html
@@ -10,21 +8,13 @@ import dash_table
 import dash
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pages.trade_data_formatting import individual_trades_columns
+from pages.trade_data_formatting import individual_trades_columns, sample_trades
 
 from app import app
 from pages.page import Page
 
 page = Page('Trade-Journal')
 page.set_path('/pages/trade-journal')
-
-sample_trades = pd.DataFrame(OrderedDict([
-    ('STOCK_CODE', ['TSLA', 'AAPL', 'BP']),
-    ('BUY_DATE', ['2020-03-13', '2019-09-13', '2015-12-18']),
-    ('BUY_PRICE', [109.32, 54.69, 30.15]),
-    ('SELL_DATE', ['2020-08-11', '2020-08-06', '2020-06-05']),
-    ('SELL_PRICE', [274.88, 113.90, 27.71])
-]))
 
 trades_table = dash_table.DataTable(
     id='trades-table',
@@ -100,23 +90,24 @@ def parse_contents(contents, filename):
 
 @app.callback(
     [Output('trades-table', 'columns'), Output('trades-table', 'data')],
-    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'contents'), Input('add-rows-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
-    [State('trades-table', 'data'), State('trades-table', 'columns'), State('upload-spreadsheet', 'filename'), State('store-trade-data', 'data')]
+    [Input('upload-spreadsheet', 'contents'),
+     Input('add-rows-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
+    [State('trades-table', 'data'), State('upload-spreadsheet', 'filename'), State('store-trade-data', 'data')]
 )
-def update_trade_table(trade_table_ts, uploaded_spreadsheets, add_row_click, stored_data_timestamp, current_trade_data,
-                       current_trade_data_columns, uploaded_filenames, stored_data):
+def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timestamp, current_trade_data,
+                       uploaded_filenames, stored_data):
     context = dash.callback_context
-
-    if trade_table_ts is None and stored_data_timestamp is not None and stored_data is not None:
-        current_trade_data = stored_data
-    else:
-        current_trade_data = current_trade_data or [{c['id']: '' for c in current_trade_data_columns}]
-
     if not context.triggered:
         input_id = 'No clicks yet'
     else:
         input_id = context.triggered[0]['prop_id'].split('.')[0]
 
+    if stored_data_timestamp is not None and stored_data is not None:
+        current_trade_data = stored_data
+    else:
+        current_trade_data = current_trade_data or [{c['id']: '' for c in individual_trades_columns}]
+
+    current_trade_data_columns = get_columns_from_dicts(current_trade_data)
     if input_id == 'add-rows-button':
         current_trade_data.append({c['id']: '' for c in current_trade_data_columns})
 
@@ -124,40 +115,22 @@ def update_trade_table(trade_table_ts, uploaded_spreadsheets, add_row_click, sto
         if uploaded_spreadsheets is not None:
             spreadsheet_data = [parse_contents(c, n) for c, n in zip(uploaded_spreadsheets, uploaded_filenames)][0]
             current_trade_data = spreadsheet_data.to_dict('records')
-            current_trade_data_columns = get_columns_from_dict(current_trade_data)
-
-    elif input_id == 'store-trade-data':
-        if stored_data_timestamp is None:
-            raise PreventUpdate
-        current_trade_data = stored_data or [{c['id']: '' for c in individual_trades_columns}]
-        try:
-            current_trade_data_columns = get_columns_from_dict(current_trade_data)
-        except:
-            current_trade_data_columns = individual_trades_columns
+            current_trade_data_columns = get_columns_from_dicts(current_trade_data)
 
     return current_trade_data_columns, current_trade_data
 
 
-def get_columns_from_dict(dicts):
+def get_columns_from_dicts(dicts):
     return [{'name': str(i), 'id': str(i)} for i in dicts[0]]
 
 
 @app.callback(
     Output('store-trade-data', 'data'),
-    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'data_timestamp'), Input('add-rows-button', 'n_clicks')],
+    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'last_modified'),
+     Input('add-rows-button', 'n_clicks')],
     [State('trades-table', 'data')]
 )
-def update_store(timestamp, uploaded_trigger, add_row_click,  table_data):
-    if timestamp is None:
+def update_store(update_stored_data, uploaded_trigger, add_row_click, table_data):
+    if update_stored_data is None and uploaded_trigger is None:
         raise PreventUpdate
     return table_data
-
-@app.callback(
-    Output('trade-data-length', 'children'),
-    [Input('trades-table', 'data_timestamp')],
-    [State('store-trade-data', 'data')]
-)
-def store_data_length(ts, data):
-    if ts is None:
-        raise PreventUpdate
-    return len(data)
