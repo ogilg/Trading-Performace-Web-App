@@ -60,7 +60,6 @@ trade_upload = html.Div([
 ])
 
 page.layout = html.Div([
-    html.Div([dcc.Store(id='store-trade-data', storage_type='local')],id='storage-div'),
     trade_table_display,
     html.Br(),
     html.H4("Upload excel sheet"),
@@ -125,7 +124,7 @@ def get_columns_from_dicts(dicts):
 
 @app.callback(
     Output('store-trade-data', 'data'),
-    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'last_modified'),
+    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'contents'),
      Input('add-rows-button', 'n_clicks')],
     [State('trades-table', 'data')]
 )

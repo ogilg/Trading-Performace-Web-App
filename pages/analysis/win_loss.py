@@ -58,12 +58,12 @@ page.set_layout_with_storage(html.Div(
 
 
 # Selectors -> well text
-@app.callback(
-    Output("win-rate", "children"),
-    [Input('url', 'pathname')],
-)
-def update_well_text(pathname):
-    return 56
+# @app.callback(
+#     Output("win-rate", "children"),
+#     [Input('url', 'pathname')],
+# )
+# def update_well_text(pathname):
+#     return 56
 
 
 # Selectors -> well text

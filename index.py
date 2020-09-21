@@ -20,9 +20,10 @@ CONTENT_STYLE = {
 }
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
+centrally_stored_data = dcc.Store(id='store-trade-data', storage_type='local')
 
 
-app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, content])
+app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data])
 
 
 @app.callback(
@@ -42,14 +43,14 @@ def display_page(pathname):
             return page_name.page.layout
     return '404'
 
-
-# @app.callback(
-#     Output('win-rate', 'children'),
-#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
-#     [State('store-trade-data', 'data')]
-# )
-# def update_stored_data(stored_data_timestamp, pathname, stored_data):
-#     return 'HELLO'
+#Test for sending data to any page
+@app.callback(
+    Output('win-rate','children'),
+    [Input('store-trade-data', 'modified_timestamp')],
+    [State('store-trade-data', 'data')]
+)
+def update_win_rate(storage_timestamp, stored_data):
+    return len(stored_data)
 
 
 if __name__ == "__main__":
