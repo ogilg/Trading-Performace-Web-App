@@ -8,9 +8,7 @@ from pages.analysis import overview
 
 
 class NavBar:
-    def __init__(self, style, columns_style):
-        self.style = style
-        self.columns_style = columns_style
+    def __init__(self):
         self.create_search_bar()
 
     def set_main_pages(self, main_pages):
@@ -22,7 +20,7 @@ class NavBar:
         for main_page_key in self.main_pages:
             self.columns.append(dbc.Col(
                 dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path,
-                                        style=self.columns_style)),
+                                        className='navbar_columns', style={'fontSize': 20})),
                 width=30
             ))
         return self.columns
@@ -61,21 +59,14 @@ class NavBar:
             ],
             color="dark",
             dark=True,
-            style=self.style,
+            className='navbar'
         )
         return layout
 
 
-style = {
-    'top': 0,
-    'left': 0,
-    "position": "fixed",
-    'width': '100%',
-    'height': '8%',
-}
-columns_style = {'color': 'white', 'fontSize': 20, 'padding-bottom': '8%', 'padding-left': '100px'}
-main_pages = {'Performance Analysis': overview, ' Trading Journal': trade_journal}
 
-navbar = NavBar(style, columns_style)
+main_pages = {'Performance Analysis': overview, 'Trading Journal': trade_journal}
+
+navbar = NavBar()
 navbar.set_main_pages(main_pages)
 navbar.create_layout()

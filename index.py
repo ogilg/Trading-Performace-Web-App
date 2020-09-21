@@ -1,6 +1,6 @@
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 from app import app
 from page_navigation.navbar import navbar
@@ -21,6 +21,7 @@ CONTENT_STYLE = {
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
+
 app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, content])
 
 
@@ -40,6 +41,15 @@ def display_page(pathname):
         if page_name.page.path == pathname:
             return page_name.page.layout
     return '404'
+
+
+# @app.callback(
+#     Output('win-rate', 'children'),
+#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
+#     [State('store-trade-data', 'data')]
+# )
+# def update_stored_data(stored_data_timestamp, pathname, stored_data):
+#     return 'HELLO'
 
 
 if __name__ == "__main__":

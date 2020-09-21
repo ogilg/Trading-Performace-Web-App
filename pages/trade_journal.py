@@ -28,7 +28,7 @@ trades_table = dash_table.DataTable(
     page_current=0,  # page number that user is on
     page_size=20  # Max amount of rows per page,
 )
-trade_uploader = html.Div([
+trade_table_display = html.Div([
     dcc.Markdown('''
     >
     > Please input your portfolio positions:
@@ -60,12 +60,11 @@ trade_upload = html.Div([
 ])
 
 page.layout = html.Div([
-    dcc.Store(id='store-trade-data', storage_type='local'),
-    trade_uploader,
+    html.Div([dcc.Store(id='store-trade-data', storage_type='local')],id='storage-div'),
+    trade_table_display,
     html.Br(),
     html.H4("Upload excel sheet"),
     trade_upload,
-    html.Div(id='trade-data-length')
 ])
 
 

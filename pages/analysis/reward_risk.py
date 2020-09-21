@@ -10,7 +10,7 @@ asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 sessions = ['session 1', 'session 2']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list, sessions)
 
-page.layout = html.Div([
+page.set_layout_with_storage(html.Div([
     html.H1(
         page.name,
         style={"margin-bottom": "10px",
@@ -20,4 +20,4 @@ page.layout = html.Div([
 
     asset_dropdown,
     html.Div(id=page.id + '-content'),
-])
+]))

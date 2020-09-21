@@ -3,7 +3,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.express as px
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 from app import app
 from pages.page import Page
@@ -21,7 +22,7 @@ asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 sessions = ['session 1', 'session 2']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list, sessions)
 
-page.layout = html.Div(
+page.set_layout_with_storage(html.Div(
     [
         html.H1(
             page.name,
@@ -33,8 +34,8 @@ page.layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(html.Div(
-                    [html.H3(id="win_rate"), html.P("Win Rate")],
-                    id="win_rate",
+                    [html.H3(id="win-rate"), html.P("Win Rate")],
+                    id="win-rate",
                     className="mini_container",
                 ),
                 ),
@@ -50,14 +51,15 @@ page.layout = html.Div(
         dcc.Graph(
             id='win-percentage',
             figure=fig
-        )
+        ),
+        html.Div(id='data-length')
     ]
-)
+))
 
 
 # Selectors -> well text
 @app.callback(
-    Output("win_rate", "children"),
+    Output("win-rate", "children"),
     [Input('url', 'pathname')],
 )
 def update_well_text(pathname):
@@ -71,3 +73,14 @@ def update_well_text(pathname):
 )
 def update_well_text(pathname):
     return 567
+
+
+@app.callback(
+    Output('data-th', 'children'),
+    [Input('win-loss-data', 'modified_timestamp')],
+    [State('win-loss-data', 'data')]
+)
+def store_data_length(ts, data):
+    if ts is None:
+        raise PreventUpdate
+    return len(data)

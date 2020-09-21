@@ -1,11 +1,5 @@
 from model.return_metrics import calculate_rate_of_return
 
-'''
-    TODO:
-    ratios
-'''
-
-
 # Stores a list of trades and calculates metrics with them
 class Portfolio:
     def __init__(self, trades_list):
@@ -39,6 +33,3 @@ class Portfolio:
     # FILTERING
     def get_trades_by_asset(self, asset):
         return filter(lambda trade : trade.asset == asset, self.trade_list)
-
-    def get_trades_by_session(self, session_id):
-        return filter(lambda trade : trade.session_id == session_id, self.trade_list)
