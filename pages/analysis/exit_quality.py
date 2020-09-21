@@ -5,8 +5,7 @@ from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-sessions = ['session 1', 'session 2']
-asset_dropdown = generate_analysis_mode_dropdown(asset_list, sessions)
+asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 
 page = Page("Exit-Quality")
 page.set_path('/pages/exit_quality')

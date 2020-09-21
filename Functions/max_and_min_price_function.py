@@ -1,8 +1,8 @@
 import yfinance as yf
 from datetime import datetime, timedelta
 
-def get_max_and_min_price (start_date, end_date, stock_code):
-    stock_data = yf.Ticker(stock_code)
+def get_max_and_min_price (start_date, end_date, asset_name):
+    stock_data = yf.Ticker(asset_name)
     interval = '1d'
     stock = stock_data.history(start=start_date, end=end_date, interval=interval, auto_adjust=False)
     stock_price = stock['Close']

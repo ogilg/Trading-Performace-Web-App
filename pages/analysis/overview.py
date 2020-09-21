@@ -7,8 +7,7 @@ page = Page('Overview')
 page.set_path('/analysis/overview')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-sessions = ['session 1', 'session 2']
-asset_dropdown = generate_analysis_mode_dropdown(asset_list, sessions)
+asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 
 page.set_layout_with_storage(html.Div([
         html.H1(

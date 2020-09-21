@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 
 class Trade:
+    # dates in datetime format
     def __init__(self, asset_name, entry_date, exit_date):
         self.asset_name = asset_name
         self.entry_date = entry_date
