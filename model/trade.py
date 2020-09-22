@@ -5,21 +5,24 @@ from datetime import datetime
 
 class Trade:
     # dates in datetime format
-    def __init__(self, asset_name, entry_date, exit_date):
+    def __init__(self, asset_name, entry_date, exit_date, entry_capital):
         self.asset_name = asset_name
+        self.entry_capital = entry_capital
         self.entry_date = datetime.strptime(entry_date, '%Y-%m-%d')
         self.exit_date = datetime.strptime(exit_date, '%Y-%m-%d')
         self.stock_history = self.retrieve_yfinance_data()
+        self.number_of_shares = self.get_number_of_shares()
         self.exit_capital = self.get_exit_capital_from_yfinance()
-
-    def set_entry_amount(self, entry_capital):
-        # stores entry capital in class variable, it becomes accessible anywhere in the class
-        self.entry_capital = entry_capital
 
     def get_exit_capital_from_yfinance(self):
         # take last close price
-        exit_capital = self.stock_history['Close'][-1]
-        return exit_capital
+        exit_price = self.stock_history['Close'][-1]
+        return exit_price * self.number_of_shares
+
+    def get_number_of_shares(self):
+        start_price = self.stock_history['Open'][0]
+        number_of_shares = round(self.entry_capital / start_price)
+        return number_of_shares
 
     def retrieve_yfinance_data(self):
         stock_ticker = yf.Ticker(self.asset_name)

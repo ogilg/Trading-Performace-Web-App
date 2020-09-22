@@ -51,8 +51,7 @@ def parse_trade_data(trade_data_list):
     trade_object_list = []
     for trade_data in trade_data_list:
         trade = Trade(asset_name=trade_data['STOCK_CODE'], entry_date=trade_data['BUY_DATE'],
-                      exit_date=trade_data['SELL_DATE'])
-        trade.set_entry_amount(trade_data['BUY_PRICE'])
+                      exit_date=trade_data['SELL_DATE'], entry_capital=trade_data['BUY_PRICE'])
         trade_object_list.append(trade)
 
     portfolio = Portfolio(trade_object_list)
