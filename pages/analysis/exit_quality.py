@@ -10,7 +10,7 @@ asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 page = Page("Exit-Quality")
 page.set_path('/pages/exit_quality')
 
-page.layout = html.Div([
+page.full_layout = html.Div([
     html.H1(
             page.name,
             style={"margin-bottom": "10px",

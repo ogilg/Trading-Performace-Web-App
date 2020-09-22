@@ -4,6 +4,7 @@ import io
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
 import dash_table
 import dash
 import pandas as pd
@@ -36,7 +37,12 @@ trade_table_display = html.Div([
     '''),
     html.Br(),
     html.Div([trades_table, ], ),
-    html.Button('Add Row', id='add-rows-button', n_clicks=0),
+    dbc.Row([
+        dbc.Col([html.Button('Add Row', id='add-rows-button', n_clicks=0, style={'margin-top':'1%'})]),
+        dbc.Col([dbc.Button("Confirm Data", color="primary", className="mr-1", style={'margin-top':'1%'})],  width={'offset':3}),
+        ],
+        justify='between',
+    )
 ])
 
 trade_upload = html.Div([
@@ -59,11 +65,11 @@ trade_upload = html.Div([
     ),
 ])
 
-page.layout = html.Div([
+page.full_layout = html.Div([
     trade_table_display,
-    html.Br(),
     html.H4("Upload excel sheet"),
     trade_upload,
+
 ])
 
 

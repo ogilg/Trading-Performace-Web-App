@@ -8,8 +8,11 @@ page.set_path('/analysis/overview')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
+overview_metrics = ['p&l', 'rate-of-return']
 
-page.set_layout_with_storage(html.Div([
+page.set_storage(overview_metrics)
+
+page.set_layout(html.Div([
         html.H1(
             page.name,
             style={"margin-bottom": "10px",

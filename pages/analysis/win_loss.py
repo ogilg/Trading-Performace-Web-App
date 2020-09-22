@@ -21,7 +21,7 @@ page.set_path('/analysis/win-loss')
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 
-page.set_layout_with_storage(html.Div(
+page.set_layout(html.Div(
     [
         html.H1(
             page.name,
@@ -33,7 +33,7 @@ page.set_layout_with_storage(html.Div(
         dbc.Row(
             [
                 dbc.Col(html.Div(
-                    [html.H3(id="win-rate"), html.P("Win Rate")],
+                    [html.H6(id="win-rate"), html.P("Win Rate")],
                     id="win-rate",
                     className="mini_container",
                 ),

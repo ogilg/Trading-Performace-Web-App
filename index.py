@@ -1,10 +1,12 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 from app import app
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
+from model.trade import Trade
 from pages import trade_journal
 from pages.analysis import overview, exit_quality, reward_risk, win_loss
 
@@ -22,8 +24,8 @@ CONTENT_STYLE = {
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 centrally_stored_data = dcc.Store(id='store-trade-data', storage_type='local')
 
-
-app.layout = html.Div([dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data])
+app.layout = html.Div(
+    [dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data])
 
 
 @app.callback(
@@ -40,17 +42,30 @@ def display_page(pathname):
         return html.P("Choose a page")
     for page_name in pages:
         if page_name.page.path == pathname:
-            return page_name.page.layout
+            return page_name.page.full_layout
     return '404'
 
-#Test for sending data to any page
-@app.callback(
-    Output('win-rate','children'),
-    [Input('store-trade-data', 'modified_timestamp')],
-    [State('store-trade-data', 'data')]
-)
-def update_win_rate(storage_timestamp, stored_data):
-    return len(stored_data)
+
+# Test for sending data to any page
+# @app.callback(
+#     Output('win-rate', 'children'),
+#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
+#     [State('store-trade-data', 'data')]
+# )
+# def update_overview_page_data(storage_timestamp, stored_data):
+#     return list(stored_data[-1].keys())
+
+
+# Test for sending data to any page
+# @app.callback(
+#     Output('overview-p&l', 'data'),
+#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
+#     [State('store-trade-data', 'data')]
+# )
+# def update_overview_page_data(storage_timestamp, pathname, stored_data):
+#     if pathname != overview.page.path or storage_timestamp is None:
+#         raise PreventUpdate
+
 
 
 if __name__ == "__main__":

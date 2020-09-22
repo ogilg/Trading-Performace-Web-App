@@ -9,8 +9,8 @@ class Trade:
         self.asset_name = asset_name
         self.entry_date = entry_date
         self.exit_date = exit_date
-        self.stock_history = self.retrieve_yfinance_data()
-        self.exit_capital = self.get_exit_capital_from_yfinance()
+        #self.stock_history = self.retrieve_yfinance_data()
+        #self.exit_capital = self.get_exit_capital_from_yfinance()
 
     def set_entry_amount(self, entry_capital):
         # stores entry capital in class variable, it becomes accessible anywhere in the class
