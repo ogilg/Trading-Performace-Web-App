@@ -1,34 +1,44 @@
-import plotly.express as px
 import yfinance as yf
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-
-def get_benchmark_gap_TOTAL(stock_code):
-    df_stock = yf.download(tickers=stock_code, period="10y")
-    y1 = round(df_stock['Close'], 2)
-    y1 = (df_stock['Close'] / df_stock['Close'][0])
-
-    df_index = yf.download(tickers='^GSPC', period="10y")
-    y2 = (df_index['Close'] / df_index['Close'][0])
-
-    y3 = y1 - y2
+import plotly.graph_objects as go
+from datetime import datetime
 
 
-    fig = px.line(df_stock, y=[y1,y2,y3], title = f'{stock_code} benchmark comparison with the S&P500')
-    fig.update_xaxes(
-    rangeslider_visible=False,
-    rangeselector=dict(
-        buttons=list([
-            dict(count=1, label="1M", step="month", stepmode="backward"),
-            dict(count=6, label="6M", step="month", stepmode="backward"),
-            dict(count=1, label="YTD", step="year", stepmode="todate"),
-            dict(count=1, label="1Y", step="year", stepmode="backward"),
-            dict(count = 5, label="5Y", step="year", stepmode = "backward"),
-            dict(step="all", label="Max")
-        ])
-    )
-)
+def get_benchmark_comparison_SP500(stock_code, start_date, end_date):
+    df_stock = yf.download(tickers=stock_code, start = start_date, end = end_date, auto_adjust= False)
+    df_index = yf.download(tickers='^GSPC', start = start_date, end = end_date, auto_adjust= False)
+    df_stock = df_stock.reset_index()
+    df_index = df_index.reset_index()
+    for i in ['Open', 'High', 'Close', 'Low']:
+        df_stock[i] = df_stock[i].astype('float64')
+    for i in ['Open', 'High', 'Close', 'Low']:
+        df_index[i] = df_index[i].astype('float64')
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+    x=df_stock['Date'],
+    y=((df_stock['Close']-df_stock['Close'][0])/df_stock['Close'][0])*100,
+    name=f"{stock_code} growth"
+))
+
+
+    fig.add_trace(go.Scatter(
+    x=df_index['Date'],
+    y=((df_index['Close']-df_index['Close'][0])/df_index['Close'][0])*100,
+    name="S&P500 growth"
+))
+
+
+    fig.add_trace(go.Scatter(
+    x=df_stock['Date'],
+    y=((df_stock['Close']-df_stock['Close'][0])/df_stock['Close'][0])*100-((df_index['Close']-df_index['Close'][0])/df_index['Close'][0])*100,
+    name="Comparison"
+))
+
+
     fig.update_layout(
     xaxis_rangeslider_visible=False,
     title={
@@ -37,15 +47,13 @@ def get_benchmark_gap_TOTAL(stock_code):
         'x': 0.5,
         'xanchor': 'center',
         'yanchor': 'top'},
-    yaxis_title="Price",
+    yaxis_title="Growth in %",
     font=dict(
         family="arial",
         color="black"
     ),
-    legend = dict(),
-    legend_title_text='Legend'
+    legend_title_text='Legend',
 )
-
 
     app = dash.Dash()
     app.layout = html.Div([
@@ -55,6 +63,9 @@ def get_benchmark_gap_TOTAL(stock_code):
 
     app.run_server(debug=True, use_reloader=False)
 
-#test
-stock_code = 'MSFT'
-plot = get_benchmark_gap_TOTAL(stock_code)
+##TEST
+
+start_date = datetime(2015,9,25)
+end_date = datetime(2020,8,14)
+stock_code = 'AAPL'
+get_benchmark_comparison_SP500(stock_code,start_date,end_date)
