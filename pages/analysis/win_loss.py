@@ -33,7 +33,7 @@ page.set_layout(html.Div(
         dbc.Row(
             [
                 dbc.Col(html.Div(
-                    [html.H6(id="win-rate"), html.P("Win Rate")],
+                    [html.H3(id="win-rate"), html.P("Win Rate")],
                     id="win-rate",
                     className="mini_container",
                 ),

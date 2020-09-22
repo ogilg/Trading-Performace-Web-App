@@ -42,30 +42,34 @@ def display_page(pathname):
         return html.P("Choose a page")
     for page_name in pages:
         if page_name.page.path == pathname:
-            return page_name.page.full_layout
+            return page_name.page.layout
     return '404'
 
 
 # Test for sending data to any page
 # @app.callback(
 #     Output('win-rate', 'children'),
-#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
+#     [Input('confirm-data-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
 #     [State('store-trade-data', 'data')]
 # )
-# def update_overview_page_data(storage_timestamp, stored_data):
-#     return list(stored_data[-1].keys())
+# def confirm_data_button(n_clicks, stored_data):
+#     assert(0==1)
+#     if n_clicks is None:
+#         return 'Not clicked'
+#     else:
+#         return n_clicks
 
 
 # Test for sending data to any page
-# @app.callback(
-#     Output('overview-p&l', 'data'),
-#     [Input('store-trade-data', 'modified_timestamp'), Input('url', 'pathname')],
-#     [State('store-trade-data', 'data')]
-# )
-# def update_overview_page_data(storage_timestamp, pathname, stored_data):
-#     if pathname != overview.page.path or storage_timestamp is None:
-#         raise PreventUpdate
-
+@app.callback(
+    Output('win-rate', 'children'),
+    [Input('store-trade-data', 'modified_timestamp')],
+    [State('store-trade-data', 'data')]
+)
+def update_overview_page_data(storage_timestamp, stored_data):
+    if storage_timestamp is None:
+        raise PreventUpdate
+    return len(stored_data)
 
 
 if __name__ == "__main__":

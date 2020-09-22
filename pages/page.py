@@ -15,7 +15,7 @@ class Page:
         self.storage = html.Div([dcc.Store(id='-'.join((self.id, stored_metric)), storage_type='session') for stored_metric in stored_data_list], id=self.id+'storage')
 
     def set_layout(self, layout):
-        self.full_layout = html.Div([self.storage, layout])
+        self.layout = html.Div([self.storage, layout])
 
     def get_layout(self):
-        return self.full_layout
+        return self.layout

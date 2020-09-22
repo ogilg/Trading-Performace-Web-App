@@ -39,7 +39,7 @@ trade_table_display = html.Div([
     html.Div([trades_table, ], ),
     dbc.Row([
         dbc.Col([html.Button('Add Row', id='add-rows-button', n_clicks=0, style={'margin-top':'1%'})]),
-        dbc.Col([dbc.Button("Confirm Data", color="primary", className="mr-1", style={'margin-top':'1%'})],  width={'offset':3}),
+        dbc.Col([dbc.Button('Confirm Data', color="primary", className="mr-1", style={'margin-top':'1%'}, id='confirm-data-button')],  width={'offset':3}),
         ],
         justify='between',
     )
@@ -65,7 +65,8 @@ trade_upload = html.Div([
     ),
 ])
 
-page.full_layout = html.Div([
+page.layout = html.Div([
+    html.Div([dcc.Store(id='store-local-data', storage_type='session')]),
     trade_table_display,
     html.H4("Upload excel sheet"),
     trade_upload,
@@ -95,8 +96,8 @@ def parse_contents(contents, filename):
 @app.callback(
     [Output('trades-table', 'columns'), Output('trades-table', 'data')],
     [Input('upload-spreadsheet', 'contents'),
-     Input('add-rows-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
-    [State('trades-table', 'data'), State('upload-spreadsheet', 'filename'), State('store-trade-data', 'data')]
+     Input('add-rows-button', 'n_clicks'), Input('store-local-data', 'modified_timestamp')],
+    [State('trades-table', 'data'), State('upload-spreadsheet', 'filename'), State('store-local-data', 'data')]
 )
 def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timestamp, current_trade_data,
                        uploaded_filenames, stored_data):
@@ -129,7 +130,7 @@ def get_columns_from_dicts(dicts):
 
 
 @app.callback(
-    Output('store-trade-data', 'data'),
+    Output('store-local-data', 'data'),
     [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'contents'),
      Input('add-rows-button', 'n_clicks')],
     [State('trades-table', 'data')]
@@ -138,3 +139,15 @@ def update_store(update_stored_data, uploaded_trigger, add_row_click, table_data
     if update_stored_data is None and uploaded_trigger is None:
         raise PreventUpdate
     return table_data
+
+
+@app.callback(
+    Output('store-trade-data', 'data'),
+    [Input('confirm-data-button', 'n_clicks')],
+    [State('store-local-data', 'data')]
+)
+def send_data_to_central_storage(n_clicks, local_data):
+    if n_clicks is None:
+        raise PreventUpdate
+    else:
+        return local_data
