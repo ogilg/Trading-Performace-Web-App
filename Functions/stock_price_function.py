@@ -12,9 +12,11 @@ def get_stock_price (start_date, stock_code):
 
 def main():
     date = datetime(2001,3,15)
+    entry_date = '2020-03-13'
+    date = datetime.strptime(entry_date, '%Y-%m-%d')
     stock_code = 'msft'
     stock = get_stock_price(date, stock_code)
-    print(stock.head())
+    print(stock['Close'][-1])
 
 if __name__ == '__main__':
     main()

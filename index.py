@@ -7,6 +7,7 @@ from app import app
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
 from model.trade import Trade
+from model.portfolio import Portfolio
 from pages import trade_journal
 from pages.analysis import overview, exit_quality, reward_risk, win_loss
 
@@ -22,7 +23,7 @@ CONTENT_STYLE = {
 }
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
-centrally_stored_data = dcc.Store(id='store-trade-data', storage_type='local')
+centrally_stored_data = dcc.Store(id='store-central-data', storage_type='local')
 
 app.layout = html.Div(
     [dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data])
@@ -46,30 +47,31 @@ def display_page(pathname):
     return '404'
 
 
-# Test for sending data to any page
-# @app.callback(
-#     Output('win-rate', 'children'),
-#     [Input('confirm-data-button', 'n_clicks'), Input('store-trade-data', 'modified_timestamp')],
-#     [State('store-trade-data', 'data')]
-# )
-# def confirm_data_button(n_clicks, stored_data):
-#     assert(0==1)
-#     if n_clicks is None:
-#         return 'Not clicked'
-#     else:
-#         return n_clicks
+def parse_trade_data(trade_data_list):
+    trade_object_list = []
+    for trade_data in trade_data_list:
+        trade = Trade(asset_name=trade_data['STOCK_CODE'], entry_date=trade_data['BUY_DATE'],
+                      exit_date=trade_data['SELL_DATE'])
+        trade.set_entry_amount(trade_data['BUY_PRICE'])
+        trade_object_list.append(trade)
+
+    portfolio = Portfolio(trade_object_list)
+    return portfolio
 
 
 # Test for sending data to any page
 @app.callback(
-    Output('win-rate', 'children'),
-    [Input('store-trade-data', 'modified_timestamp')],
-    [State('store-trade-data', 'data')]
+    [Output(metric, 'data') for metric in overview.page.storage],
+    [Input('store-central-data', 'modified_timestamp')],
+    [State('store-central-data', 'data')]
 )
-def update_overview_page_data(storage_timestamp, stored_data):
+def broadcast_trade_data(storage_timestamp, stored_trade_data):
     if storage_timestamp is None:
         raise PreventUpdate
-    return len(stored_data)
+    portfolio = parse_trade_data(stored_trade_data)
+    profit = portfolio.calculate_total_profit()
+    assert(profit is not None)
+    return profit, profit
 
 
 if __name__ == "__main__":

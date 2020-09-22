@@ -1,5 +1,6 @@
 from model.return_metrics import calculate_rate_of_return
 
+
 # Stores a list of trades and calculates metrics with them
 class Portfolio:
     def __init__(self, trades_list):
@@ -20,16 +21,22 @@ class Portfolio:
         return self.rate_of_returns
 
     def create_profit_list(self):
-        map(lambda trade: trade.calculate_profit, self.trade_list)
+        for trade in self.trade_list:
+            trade.calculate_profit()
         self.profits = [trade.profit for trade in self.trade_list]
 
     def calculate_win_rate(self):
         return len([profit >= 0 for profit in self.profits]) / len(self.trade_list)
 
     def calculate_total_profit(self):
-        return sum(self.profits)
+        total_profit = sum(self.profits)
+        assert (isinstance(total_profit, float))
+        return total_profit
 
+    def get_asset_list_from_trades(self):
+        asset_list = list(dict.fromkeys([trade.asset for trade in self.trade_list]))
+        return asset_list
 
     # FILTERING
     def get_trades_by_asset(self, asset):
-        return filter(lambda trade : trade.asset == asset, self.trade_list)
+        return filter(lambda trade: trade.asset == asset, self.trade_list)

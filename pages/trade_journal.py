@@ -32,14 +32,14 @@ trades_table = dash_table.DataTable(
 trade_table_display = html.Div([
     dcc.Markdown('''
     >
-    > Please input your portfolio positions:
+    > ##### Input your portfolio positions and click the confirm button.
     >
     '''),
     html.Br(),
     html.Div([trades_table, ], ),
     dbc.Row([
         dbc.Col([html.Button('Add Row', id='add-rows-button', n_clicks=0, style={'margin-top':'1%'})]),
-        dbc.Col([dbc.Button('Confirm Data', color="primary", className="mr-1", style={'margin-top':'1%'}, id='confirm-data-button')],  width={'offset':3}),
+        dbc.Col([dbc.Button('Confirm Trades', color="primary", className="mr-1", style={'margin-top':'1%'}, id='confirm-data-button')],  width={'offset':3}),
         ],
         justify='between',
     )
@@ -142,7 +142,7 @@ def update_store(update_stored_data, uploaded_trigger, add_row_click, table_data
 
 
 @app.callback(
-    Output('store-trade-data', 'data'),
+    Output('store-central-data', 'data'),
     [Input('confirm-data-button', 'n_clicks')],
     [State('store-local-data', 'data')]
 )
