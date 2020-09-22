@@ -6,12 +6,14 @@ class Portfolio:
     def __init__(self, trades_list):
         self.trade_list = trades_list
         self.create_profit_list()
+        self.find_total_amount_traded()
+        self.find_total_exit_amount()
 
     def find_total_amount_traded(self):
         self.total_amount_traded = sum([trade.entry_capital for trade in self.trade_list])
         return self.total_amount_traded
 
-    def find_total_exit_amounts(self):
+    def find_total_exit_amount(self):
         self.total_exit_amount = sum([trade.exit_capital for trade in self.trade_list])
         return self.total_exit_amount
 
@@ -24,9 +26,6 @@ class Portfolio:
         for trade in self.trade_list:
             trade.calculate_profit()
         self.profits = [trade.profit for trade in self.trade_list]
-
-    def calculate_win_rate(self):
-        return len([profit >= 0 for profit in self.profits]) / len(self.trade_list)
 
     def calculate_total_profit(self):
         total_profit = sum(self.profits)

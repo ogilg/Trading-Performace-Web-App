@@ -17,6 +17,8 @@ fig = px.line(sample_data, x='date', y='GOOG')
 
 page = Page("Win-Loss")
 page.set_path('/analysis/win-loss')
+metrics = ['profit-list']
+page.set_storage(metrics)
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
@@ -74,12 +76,3 @@ def update_well_text(pathname):
     return 567
 
 
-@app.callback(
-    Output('data-th', 'children'),
-    [Input('win-loss-data', 'modified_timestamp')],
-    [State('win-loss-data', 'data')]
-)
-def store_data_length(ts, data):
-    if ts is None:
-        raise PreventUpdate
-    return len(data)

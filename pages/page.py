@@ -12,7 +12,7 @@ class Page:
         self.path = path
 
     def set_storage(self, stored_data_list):
-        self.storage = html.Div([dcc.Store(id='-'.join((self.id, stored_metric)), storage_type='session') for stored_metric in stored_data_list], id=self.id+'storage')
+        self.storage = stored_data_list
 
     def set_layout(self, layout):
         self.layout = html.Div([self.storage, layout])

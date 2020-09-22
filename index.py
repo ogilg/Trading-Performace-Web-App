@@ -9,10 +9,11 @@ from page_navigation.sidebar import sidebar
 from model.trade import Trade
 from model.portfolio import Portfolio
 from pages import trade_journal
-from pages.analysis import overview, exit_quality, reward_risk, win_loss
+from pages.analysis import overview, exit_quality, reward_risk, win_loss, create_storage
 
 pages = [overview, win_loss, reward_risk, exit_quality, trade_journal]
 analysis_pages = [overview, win_loss, reward_risk, exit_quality]
+analysis_pages_building = [overview, win_loss]
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
@@ -26,7 +27,8 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 centrally_stored_data = dcc.Store(id='store-central-data', storage_type='local')
 
 app.layout = html.Div(
-    [dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data])
+    [dcc.Location(id="url"), navbar.layout, sidebar.layout, content, centrally_stored_data,
+     create_storage.create_storage_div(analysis_pages)])
 
 
 @app.callback(
@@ -60,7 +62,7 @@ def parse_trade_data(trade_data_list):
 
 # Test for sending data to any page
 @app.callback(
-    [Output(metric, 'data') for metric in overview.page.storage],
+    create_storage.create_output_list(analysis_pages_building),
     [Input('store-central-data', 'modified_timestamp')],
     [State('store-central-data', 'data')]
 )
@@ -69,8 +71,9 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
         raise PreventUpdate
     portfolio = parse_trade_data(stored_trade_data)
     profit = portfolio.calculate_total_profit()
-    assert(profit is not None)
-    return profit, profit
+    profit_list = portfolio.profits
+    rate_of_return = portfolio.find_rate_of_return()
+    return profit, rate_of_return, 0
 
 
 if __name__ == "__main__":
