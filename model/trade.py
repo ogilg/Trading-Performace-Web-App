@@ -1,6 +1,8 @@
 from model.return_metrics import calculate_rate_of_return
 import yfinance as yf
 from datetime import datetime
+import pandas as pd
+from model.date_utils import date_range
 
 
 class Trade:
@@ -27,8 +29,18 @@ class Trade:
     def retrieve_yfinance_data(self):
         stock_ticker = yf.Ticker(self.asset_name)
         stock_history = stock_ticker.history(start=self.entry_date, end=self.exit_date, auto_adjust=False)
+        stock_history.drop(['Adj Close', 'Dividends', 'Stock Splits'], axis=1)
         assert (len(stock_history) > 0)
         return stock_history
+
+    def calculate_profit_by_day(self):
+        profit_by_day_open = []
+        profit_by_day_close = []
+        for day in date_range(self.entry_date, self.exit_date):
+            profit_by_day_open.append(self.stock_history['Open'][day] * self.number_of_shares - self.entry_capital)
+            profit_by_day_close.append(self.stock_history['Close'][day] * self.number_of_shares - self.entry_capital)
+
+        self.daily_profit = pd.DataFrame({'Profit Open': profit_by_day_open, 'Profit Close': profit_by_day_close})
 
     def calculate_profit(self):
         self.profit = self.exit_capital - self.entry_capital
