@@ -34,13 +34,19 @@ class Trade:
         return stock_history
 
     def calculate_profit_by_day(self):
-        profit_by_day_open = []
-        profit_by_day_close = []
-        for day in date_range(self.entry_date, self.exit_date):
-            profit_by_day_open.append(self.stock_history['Open'][day] * self.number_of_shares - self.entry_capital)
-            profit_by_day_close.append(self.stock_history['Close'][day] * self.number_of_shares - self.entry_capital)
+        daily_profits = []
 
-        self.daily_profit = pd.DataFrame({'Profit Open': profit_by_day_open, 'Profit Close': profit_by_day_close})
+        for day in date_range(self.entry_date, self.exit_date):
+            day = datetime.fromordinal(day.toordinal())
+            try:
+                day_profit_open = self.stock_history['Open'][day] * self.number_of_shares - self.entry_capital
+                day_profit_close = self.stock_history['Close'][day] * self.number_of_shares - self.entry_capital
+                day_profit = {'Date': day, 'Profit Open': day_profit_open, 'Profit Close': day_profit_close}
+                daily_profits.append(day_profit)
+            except KeyError:
+                # skip weekends
+                pass
+        self.daily_profits = pd.DataFrame(daily_profits).set_index('Date')
 
     def calculate_profit(self):
         self.profit = self.exit_capital - self.entry_capital

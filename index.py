@@ -75,6 +75,8 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     profit = portfolio.calculate_total_profit()
     profit_list = portfolio.profits
     rate_of_return = portfolio.find_rate_of_return()
+
+    portfolio.calculate_aggregate_profit_by_day()
     return profit, rate_of_return, profit_list
 
 
