@@ -23,8 +23,7 @@ page.set_storage(metrics)
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 
-page.set_layout(html.Div(
-    [
+page.set_layout([
         html.H1(
             page.name,
             style={"margin-bottom": "10px",
@@ -37,6 +36,12 @@ page.set_layout(html.Div(
                 dbc.Col(html.Div(
                     [html.H3(id="win-rate"), html.P("Win Rate")],
                     id="win-rate",
+                    className="mini_container",
+                ),
+                ),
+                dbc.Col(html.Div(
+                    [html.H3(id="number-of-trades"), html.P("Number Of Trades")],
+                    id="number-of-trades",
                     className="mini_container",
                 ),
                 ),
@@ -55,24 +60,24 @@ page.set_layout(html.Div(
         ),
         html.Div(id='data-length')
     ]
-))
-
-
-# Selectors -> well text
-# @app.callback(
-#     Output("win-rate", "children"),
-#     [Input('url', 'pathname')],
-# )
-# def update_well_text(pathname):
-#     return 56
+)
 
 
 # Selectors -> well text
 @app.callback(
-    Output("expectancy", "children"),
-    [Input('url', 'pathname')],
+    [Output("win-rate", "children"), Output("expectancy", "children"), Output('number-of-trades', 'children')],
+    [Input('win-loss-profit-list', 'modified_timestamp')],
+    [State('win-loss-profit-list', 'data')],
 )
-def update_well_text(pathname):
-    return 567
+def update_well_text(ts, profit_list):
+    if profit_list is None or len(profit_list) == 0:
+        raise PreventUpdate
+    wins = [profit > 0 for profit in profit_list]
+    num_wins = wins.count(True)
+    num_losses = len(profit_list) - num_wins
+    win_rate = num_losses / len(profit_list)
+    expectancy = sum(profit_list)/float(len(profit_list))
+    return "{:.2%}".format(win_rate), round(expectancy, 2), len(profit_list)
+
 
 

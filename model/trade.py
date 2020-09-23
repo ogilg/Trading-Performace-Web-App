@@ -9,9 +9,9 @@ class Trade:
     # dates in datetime format
     def __init__(self, asset_name, entry_date, exit_date, entry_capital):
         self.asset_name = asset_name
-        self.entry_capital = entry_capital
-        self.entry_date = datetime.strptime(entry_date, '%Y-%m-%d')
-        self.exit_date = datetime.strptime(exit_date, '%Y-%m-%d')
+        self.entry_capital = float(entry_capital)
+        self.entry_date = datetime.strptime(entry_date.split('T')[0], '%Y-%m-%d')
+        self.exit_date = datetime.strptime(exit_date.split('T')[0], '%Y-%m-%d')
         self.stock_history = self.retrieve_yfinance_data()
         self.number_of_shares = self.get_number_of_shares()
         self.exit_capital = self.get_exit_capital_from_yfinance()

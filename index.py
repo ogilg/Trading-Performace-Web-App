@@ -2,6 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import logging
 
 from app import app
 from page_navigation.navbar import navbar
@@ -67,13 +68,14 @@ def parse_trade_data(trade_data_list):
     [State('store-central-data', 'data')]
 )
 def broadcast_trade_data(storage_timestamp, stored_trade_data):
+    print('Broadcasting Trade Data')
     if storage_timestamp is None:
         raise PreventUpdate
     portfolio = parse_trade_data(stored_trade_data)
     profit = portfolio.calculate_total_profit()
     profit_list = portfolio.profits
     rate_of_return = portfolio.find_rate_of_return()
-    return profit, rate_of_return, 0
+    return profit, rate_of_return, profit_list
 
 
 if __name__ == "__main__":

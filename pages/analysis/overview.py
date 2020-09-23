@@ -18,13 +18,31 @@ overview_metrics = ['p&l', 'rate-of-return']
 page.set_storage(overview_metrics)
 
 metrics = html.Div(
-            [html.H3(id="p&l"), html.P("P&L")],
-            id="p&l",
-            className="mini_container",
-        )
+    dbc.Row(
+        [
+            dbc.Col(html.Div(
+                [html.H3(id="p&l"), html.P("P&L")],
+                id="p&l",
+                className="mini_container",
+            )
+            ),
+            dbc.Col(html.Div(
+                [html.H3(id='rate-of-return'), html.P("Rate of Return")],
+                id="rate-of-return",
+                className="mini_container",
+            )
+            ),
+            dbc.Col(html.Div(
+                [html.H3(id='profit-factor'), html.P("Profit Factor")],
+                id='profit-factor',
+                className="mini_container",
+            )
+            ),
+        ]
+    )
+)
 
-
-page.set_layout(html.Div([
+page.set_layout([
     html.H1(
         page.name,
         style={"margin-bottom": "10px",
@@ -37,7 +55,7 @@ page.set_layout(html.Div([
         '''),
     asset_dropdown,
     metrics,
-]))
+])
 
 
 @app.callback(
@@ -46,4 +64,20 @@ page.set_layout(html.Div([
     [State('overview-p&l', 'data')]
 )
 def update_profit(ts, profit):
-    return profit or 'Confirm data'
+    if profit is None:
+        return 'Confirm Data'
+    return round(profit,2)
+
+
+@app.callback(
+    [Output('rate-of-return', 'children'), Output('profit-factor', 'children')],
+    [Input('overview-rate-of-return', 'modified_timestamp')],
+    [State('overview-rate-of-return', 'data')]
+)
+def update_profit(ts, rate_of_return):
+    if rate_of_return is None:
+        return 'Confirm Data'
+    rate_of_return = round(rate_of_return, 2)
+    return rate_of_return, rate_of_return + 1
+
+

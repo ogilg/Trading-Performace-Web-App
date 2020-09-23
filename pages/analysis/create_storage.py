@@ -11,6 +11,7 @@ def create_storage_div(analysis_pages):
 
     return html.Div(storage)
 
+
 def create_output_list(analysis_pages):
     outputs = []
     for page in analysis_pages:

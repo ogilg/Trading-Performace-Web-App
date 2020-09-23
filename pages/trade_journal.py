@@ -1,5 +1,6 @@
 import base64
 import io
+import logging
 
 import dash_core_components as dcc
 import dash_html_components as html
@@ -147,6 +148,7 @@ def update_store(update_stored_data, uploaded_trigger, add_row_click, table_data
     [State('store-local-data', 'data')]
 )
 def send_data_to_central_storage(n_clicks, local_data):
+    print('Sending local data to central storage')
     if n_clicks is None:
         raise PreventUpdate
     else:
