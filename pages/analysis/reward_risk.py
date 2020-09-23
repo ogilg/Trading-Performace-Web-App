@@ -9,7 +9,7 @@ page.set_path('/pages/reward_risk')
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 
-page.set_layout(html.Div([
+page.set_layout([
     html.H1(
         page.name,
         style={"margin-bottom": "10px",
@@ -19,4 +19,4 @@ page.set_layout(html.Div([
 
     asset_dropdown,
     html.Div(id=page.id + '-content'),
-]))
+])

@@ -44,7 +44,6 @@ class Portfolio:
         for trade in self.trade_list[1:]:
             aggregate_daily_profit.add(trade.daily_profits, fill_value=0)
 
-        print(self.trade_list[1].daily_profits.head())
         return aggregate_daily_profit
 
     # FILTERING

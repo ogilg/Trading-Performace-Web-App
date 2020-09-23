@@ -10,7 +10,7 @@ asset_dropdown = generate_analysis_mode_dropdown(asset_list)
 page = Page("Exit-Quality")
 page.set_path('/pages/exit_quality')
 
-page.layout = html.Div([
+page.layout = [
     html.H1(
             page.name,
             style={"margin-bottom": "10px",
@@ -23,4 +23,4 @@ page.layout = html.Div([
     dcc.Link('Go to overview', href='/pages/overview'),
     html.Br(),
     dcc.Link('Go back to index', href='/')
-])
+]

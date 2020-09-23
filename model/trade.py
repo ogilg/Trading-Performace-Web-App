@@ -33,6 +33,15 @@ class Trade:
         assert (len(stock_history) > 0)
         return stock_history
 
+    def calculate_profit(self):
+        self.profit = self.exit_capital - self.entry_capital
+        self.win = self.profit > 0
+
+    def find_rate_of_return(self):
+        self.rate_of_return = calculate_rate_of_return(self.entry_capital, self.exit_capital)
+        self.profit_factor = 1 + self.rate_of_return
+        return self.rate_of_return
+
     def calculate_profit_by_day(self):
         daily_profits = []
 
@@ -47,12 +56,3 @@ class Trade:
                 # skip weekends
                 pass
         self.daily_profits = pd.DataFrame(daily_profits).set_index('Date')
-
-    def calculate_profit(self):
-        self.profit = self.exit_capital - self.entry_capital
-        self.win = self.profit > 0
-
-    def find_rate_of_return(self):
-        self.rate_of_return = calculate_rate_of_return(self.entry_capital, self.exit_capital)
-        self.profit_factor = 1 + self.rate_of_return
-        return self.rate_of_return

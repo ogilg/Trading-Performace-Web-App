@@ -9,7 +9,7 @@ import dash_table
 import dash
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pages.trade_data_formatting import individual_trades_columns, sample_trades
+from pages.trade_data_formatting import individual_trades_columns
 
 from app import app
 from pages.page import Page
