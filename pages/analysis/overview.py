@@ -96,4 +96,17 @@ def update_profit(ts, aggregate_daily_profit):
         raise PreventUpdate
     profit_at_open = px.line(aggregate_daily_profit, x='Date', y='Profit Open', title='Profit at Open',)
     profit_at_close = px.line(aggregate_daily_profit, x='Date', y='Profit Close',  title='Profit at Close', color_discrete_map={'Profir Close': 'red'})
+    add_line_to_figure(profit_at_close)
+    add_line_to_figure(profit_at_open)
     return profit_at_open, profit_at_close
+
+# output argument
+def add_line_to_figure(fig):
+    fig.update_layout(shapes=[
+        dict(
+            type='line',
+            yref='y', y0=0, y1=0,
+            xref='paper', x0=0, x1=1
+        )
+    ])
+

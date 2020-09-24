@@ -1,5 +1,4 @@
 from model.return_metrics import calculate_rate_of_return
-import pandas as pd
 
 
 # Stores a list of trades and calculates metrics with them
@@ -11,11 +10,11 @@ class Portfolio:
         self.find_total_exit_amount()
 
     def find_total_amount_traded(self):
-        self.total_amount_traded = sum([trade.entry_capital for trade in self.trade_list])
+        self.total_amount_traded = sum([trade.buy_price * trade.number_of_shares for trade in self.trade_list])
         return self.total_amount_traded
 
     def find_total_exit_amount(self):
-        self.total_exit_amount = sum([trade.exit_capital for trade in self.trade_list])
+        self.total_exit_amount = sum([trade.sell_price * trade.number_of_shares for trade in self.trade_list])
         return self.total_exit_amount
 
     def find_rate_of_return(self):
@@ -34,7 +33,7 @@ class Portfolio:
         return total_profit
 
     def get_asset_list_from_trades(self):
-        asset_list = list(dict.fromkeys([trade.asset_name for trade in self.trade_list]))
+        asset_list = list(dict.fromkeys([trade.asset_name for trade in self.trade_list if trade.data_fetch_successful]))
         return asset_list
 
     def calculate_aggregate_profit_by_day(self):

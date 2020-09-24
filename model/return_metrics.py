@@ -1,6 +1,6 @@
 
-def calculate_rate_of_return(entry_capital, exit_capital):
-    rate_of_return = (exit_capital - entry_capital) / entry_capital
+def calculate_rate_of_return(buy_price, sell_price):
+    rate_of_return = (sell_price - buy_price) / buy_price
     return rate_of_return
 
 def find_day_high(stock_day_history):

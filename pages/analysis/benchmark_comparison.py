@@ -1,13 +1,8 @@
 import dash_html_components as html
-from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
-import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 from datetime import datetime, timedelta
 import yfinance as yf
 import plotly.graph_objects as go
-from dash.exceptions import PreventUpdate
-import pandas as pd
-import plotly.express as px
 from dash.dependencies import Input, Output, State
 from app import app
 
@@ -51,11 +46,9 @@ page.set_layout([
 )
 def update_output(start_date, end_date, ts, asset_list):
     stock_code = asset_list[0]
-    print(stock_code)
 
     stock_ticker = yf.Ticker(stock_code)
     stock_info = stock_ticker.info
-    stock_name = stock_info['shortName']
 
     df_stock = yf.download(tickers=stock_code, start=start_date, end=end_date, auto_adjust=False)
     df_index = yf.download(tickers='^GSPC', start=start_date, end=end_date, auto_adjust=False)
@@ -72,17 +65,21 @@ def update_output(start_date, end_date, ts, asset_list):
         y=((df_stock['Close'] - df_stock['Close'][0]) / df_stock['Close'][0]) * 100,
         name=f"{stock_code.upper()} growth"
     ))
+
     benchmark_figure.add_trace(go.Scatter(
         x=df_index['Date'],
         y=((df_index['Close'] - df_index['Close'][0]) / df_index['Close'][0]) * 100,
         name="S&P500 growth"
     ))
+
     benchmark_figure.add_trace(go.Scatter(
         x=df_stock['Date'],
         y=((df_stock['Close'] - df_stock['Close'][0]) / df_stock['Close'][0]) * 100 - (
                 (df_index['Close'] - df_index['Close'][0]) / df_index['Close'][0]) * 100,
         name="Comparison"
     ))
+
+    stock_name = stock_info['shortName']
     benchmark_figure.update_layout(
         xaxis_rangeslider_visible=False,
         title={
@@ -96,6 +93,5 @@ def update_output(start_date, end_date, ts, asset_list):
             family="arial",
             color="black"
         ),
-        legend_title_text='Legend',
     )
     return benchmark_figure

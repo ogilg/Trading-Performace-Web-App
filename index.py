@@ -52,9 +52,10 @@ def display_page(pathname):
 def parse_trade_data(trade_data_list):
     trades = []
     for trade_data in trade_data_list:
-        trade = Trade(asset_name=trade_data['STOCK_CODE'], entry_date=trade_data['BUY_DATE'],
-                      exit_date=trade_data['SELL_DATE'], entry_capital=trade_data['BUY_PRICE'])
-        trades.append(trade)
+        trade = Trade(asset_name=trade_data['STOCK CODE'], entry_date=trade_data['BUY DATE'],
+                      exit_date=trade_data['SELL DATE'], buy_price=trade_data['BUY PRICE'], number_of_shares=trade_data['NUMBER OF SHARES'])
+        if trade.data_fetch_successful:
+            trades.append(trade)
 
     portfolio = Portfolio(trades)
     return portfolio

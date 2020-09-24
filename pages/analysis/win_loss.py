@@ -71,12 +71,17 @@ page.set_layout([
 def update_well_text(ts, profit_list):
     if profit_list is None or len(profit_list) == 0:
         raise PreventUpdate
+    win_rate = calculate_win_rate(profit_list)
+    expectancy = sum(profit_list)/float(len(profit_list))
+    return "{:.2%}".format(win_rate), round(expectancy, 2), len(profit_list)
+
+
+def calculate_win_rate(profit_list):
     wins = [profit > 0 for profit in profit_list]
     num_wins = wins.count(True)
     num_losses = len(profit_list) - num_wins
-    win_rate = num_losses / len(profit_list)
-    expectancy = sum(profit_list)/float(len(profit_list))
-    return "{:.2%}".format(win_rate), round(expectancy, 2), len(profit_list)
+    win_rate = num_wins / len(profit_list)
+    return win_rate
 
 
 
