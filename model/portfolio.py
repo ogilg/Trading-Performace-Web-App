@@ -34,7 +34,7 @@ class Portfolio:
         return total_profit
 
     def get_asset_list_from_trades(self):
-        asset_list = list(dict.fromkeys([trade.asset for trade in self.trade_list]))
+        asset_list = list(dict.fromkeys([trade.asset_name for trade in self.trade_list]))
         return asset_list
 
     def calculate_aggregate_profit_by_day(self):

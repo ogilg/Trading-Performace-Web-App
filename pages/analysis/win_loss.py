@@ -58,7 +58,6 @@ page.set_layout([
             id='win-percentage',
             figure=fig
         ),
-        html.Div(id='data-length')
     ]
 )
 

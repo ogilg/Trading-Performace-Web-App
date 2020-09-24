@@ -1,6 +1,8 @@
 import dash_html_components as html
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
+from dash.exceptions import PreventUpdate
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output, State
@@ -13,11 +15,11 @@ page.set_path('/analysis/overview')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
 asset_dropdown = generate_analysis_mode_dropdown(asset_list)
-overview_metrics = ['p&l', 'rate-of-return']
+overview_metrics = ['p&l', 'rate-of-return', 'aggregate-profit-by-day']
 
 page.set_storage(overview_metrics)
 
-metrics = html.Div(
+metrics = html.Div([
     dbc.Row(
         [
             dbc.Col(html.Div(
@@ -39,7 +41,10 @@ metrics = html.Div(
             )
             ),
         ]
-    )
+    ),
+    dcc.Graph(id='aggregate-daily-profit-open',),
+    dcc.Graph(id='aggregate-daily-profit-close'),
+    ]
 )
 
 page.set_layout([
@@ -66,7 +71,7 @@ page.set_layout([
 def update_profit(ts, profit):
     if profit is None:
         return 'Confirm Data'
-    return round(profit,2)
+    return round(profit, 2)
 
 
 @app.callback(
@@ -76,8 +81,19 @@ def update_profit(ts, profit):
 )
 def update_profit(ts, rate_of_return):
     if rate_of_return is None:
-        return 'Confirm Data'
+        raise PreventUpdate
     rate_of_return = round(rate_of_return, 2)
     return rate_of_return, rate_of_return + 1
 
 
+@app.callback(
+    [Output("aggregate-daily-profit-open", "figure"), Output("aggregate-daily-profit-close", "figure")],
+    [Input('overview-aggregate-profit-by-day', 'modified_timestamp')],
+    [State('overview-aggregate-profit-by-day', 'data')]
+)
+def update_profit(ts, aggregate_daily_profit):
+    if aggregate_daily_profit is None:
+        raise PreventUpdate
+    profit_at_open = px.line(aggregate_daily_profit, x='Date', y='Profit Open', title='Profit at Open',)
+    profit_at_close = px.line(aggregate_daily_profit, x='Date', y='Profit Close',  title='Profit at Close', color_discrete_map={'Profir Close': 'red'})
+    return profit_at_open, profit_at_close

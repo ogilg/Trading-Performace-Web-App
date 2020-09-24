@@ -2,7 +2,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-import logging
 
 from app import app
 from page_navigation.navbar import navbar
@@ -10,11 +9,11 @@ from page_navigation.sidebar import sidebar
 from model.trade import Trade
 from model.portfolio import Portfolio
 from pages import trade_journal
-from pages.analysis import overview, exit_quality, reward_risk, win_loss, create_storage
+from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchmark_comparison, create_storage
 
-pages = [overview, win_loss, reward_risk, exit_quality, trade_journal]
-analysis_pages = [overview, win_loss, reward_risk, exit_quality]
-analysis_pages_building = [overview, win_loss]
+pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, trade_journal]
+analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality]
+analysis_pages_building = [overview, win_loss, benchmark_comparison]
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
@@ -51,13 +50,13 @@ def display_page(pathname):
 
 
 def parse_trade_data(trade_data_list):
-    trade_object_list = []
+    trades = []
     for trade_data in trade_data_list:
         trade = Trade(asset_name=trade_data['STOCK_CODE'], entry_date=trade_data['BUY_DATE'],
                       exit_date=trade_data['SELL_DATE'], entry_capital=trade_data['BUY_PRICE'])
-        trade_object_list.append(trade)
+        trades.append(trade)
 
-    portfolio = Portfolio(trade_object_list)
+    portfolio = Portfolio(trades)
     return portfolio
 
 
@@ -76,8 +75,10 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     profit_list = portfolio.profits
     rate_of_return = portfolio.find_rate_of_return()
 
-    portfolio.calculate_aggregate_profit_by_day()
-    return profit, rate_of_return, profit_list
+    aggregate_profit_by_day = portfolio.calculate_aggregate_profit_by_day().reset_index()
+
+    asset_list = portfolio.get_asset_list_from_trades()
+    return [profit, rate_of_return, aggregate_profit_by_day.to_dict(), profit_list, asset_list]
 
 
 if __name__ == "__main__":
