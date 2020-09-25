@@ -32,7 +32,6 @@ body {
   width : 40%;
 }
 .dropdown2{
-  background-color : #fffff;
   box-shadow: 2px 2px 2px lightgrey;
   width : 70%;
   position: relative;
@@ -66,6 +65,13 @@ body {
   padding-left: 100px;
 }
 
+.date_picker {
+  box-shadow: 2px 2px 2px lightgrey;
+  width : max-content;
+  position: relative;
+  margin-bottom: 10px;
+}
+
 .dcc_control {
   margin: 0;
   padding: 5px;
@@ -75,8 +81,8 @@ body {
 .control_label {
   margin: 0;
   padding: 10px;
-  padding-bottom: 0px;
-  margin-bottom: 0px;
+  padding-bottom: 0;
+  margin-bottom: 0;
   width: calc(100%-40px);
 }
 

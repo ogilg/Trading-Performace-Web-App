@@ -1,20 +1,19 @@
-import dash_html_components as html
-from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-from dash.exceptions import PreventUpdate
-import pandas as pd
+import dash_html_components as html
 import plotly.express as px
 from dash.dependencies import Input, Output, State
-from app import app
+from dash.exceptions import PreventUpdate
 
+from app import app
+from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
 page = Page('Overview')
 page.set_path('/analysis/overview')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-asset_dropdown = generate_analysis_mode_dropdown(asset_list)
+asset_dropdown = generate_analysis_mode_dropdown(page.id)
 overview_metrics = ['p&l', 'rate-of-return', 'aggregate-profit-by-day']
 
 page.set_storage(overview_metrics)

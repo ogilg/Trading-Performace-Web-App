@@ -21,7 +21,7 @@ metrics = ['profit-list']
 page.set_storage(metrics)
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-asset_dropdown = generate_analysis_mode_dropdown(asset_list)
+asset_dropdown = generate_analysis_mode_dropdown(page.id)
 
 page.set_layout([
         html.H1(

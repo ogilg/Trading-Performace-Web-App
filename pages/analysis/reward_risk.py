@@ -7,7 +7,7 @@ page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-asset_dropdown = generate_analysis_mode_dropdown(asset_list)
+asset_dropdown = generate_analysis_mode_dropdown(page.id)
 
 page.set_layout([
     html.H1(
