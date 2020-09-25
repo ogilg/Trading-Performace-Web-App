@@ -25,6 +25,9 @@ page.set_layout([
                "margin-left": "4px",
                },
     ),
+    html.Div(children='''
+            Choose an asset to benchmark
+        '''),
     html.Br(),
     generate_analysis_mode_dropdown(page.id),
     html.Br(),

@@ -43,7 +43,6 @@ class Trade:
 
     def calculate_profit(self):
         self.profit = round((self.sell_price - self.buy_price) * self.number_of_shares, 2)
-        print(self.buy_price, self.sell_price)
         self.win = self.profit > 0
 
     def find_rate_of_return(self):
