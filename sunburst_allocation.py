@@ -23,7 +23,7 @@ df = pd.DataFrame(data, columns= ['sector','industry','amount'])
 
 
 fig = px.sunburst(df,path=['sector','industry'], values='amount', color_discrete_sequence=px.colors.sequential.RdBu, title= 'Asset allocation overview per sector and industry')
-
+fig.update_traces(textinfo='label+percent entry')
 fig.show()
 
 ## INTRODUCE A FAIL-SAFE!!! IF ONE SECTOR OR INDUSTRY IS MISSING THE WHOLE CHART FAILS. Need to simply ignore if value is inexistant
