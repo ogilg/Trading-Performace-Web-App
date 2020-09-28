@@ -5,9 +5,7 @@ from pages.page import Page
 
 page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
-
-asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-asset_dropdown = generate_analysis_mode_dropdown(page.id)
+page.set_storage(['profit-list', 'entry-dates', 'exit-dates', 'number-of-shares'])
 
 page.set_layout([
     html.H1(
@@ -17,6 +15,6 @@ page.set_layout([
                },
     ),
 
-    asset_dropdown,
+    generate_analysis_mode_dropdown(page.id),
     html.Div(id=page.id + '-content'),
 ])

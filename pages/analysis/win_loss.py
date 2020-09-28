@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -7,24 +7,19 @@ import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from model.date_utils import date_range
 
 from app import app
-from pages.page import Page
+from model.date_utils import date_range
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
+from pages.page import Page
 
 sample_data = px.data.stocks()
 sample_data = pd.DataFrame(sample_data)
 
-fig = px.line(sample_data, x='date', y='GOOG')
-
 page = Page("Win-Loss")
 page.set_path('/analysis/win-loss')
-metrics = ['profit-list', 'exit-dates']
+metrics = ['profit-list', 'exit-dates', 'asset-list']
 page.set_storage(metrics)
-
-asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-asset_dropdown = generate_analysis_mode_dropdown(page.id)
 
 page.set_layout([
     html.H1(
@@ -33,7 +28,7 @@ page.set_layout([
                "margin-left": "4px",
                },
     ),
-    asset_dropdown,
+    generate_analysis_mode_dropdown(page.id),
     dbc.Row(
         [
             dbc.Col(html.Div(
@@ -59,18 +54,16 @@ page.set_layout([
 
     dcc.Graph(
         id='win-rate-through-time',
-    ),
-]
+    ),]
 )
 
 
-# Selectors -> well text
 @app.callback(
     [Output("win-rate", "children"), Output("expectancy", "children"), Output('number-of-trades', 'children')],
     [Input('win-loss-profit-list', 'modified_timestamp')],
     [State('win-loss-profit-list', 'data')],
 )
-def update_well_text(ts, profit_list):
+def update_metrics(ts, profit_list):
     if profit_list is None or len(profit_list) == 0:
         raise PreventUpdate
     win_rate = calculate_win_rate(profit_list)
@@ -88,27 +81,55 @@ def calculate_win_rate(profit_list):
 
 @app.callback(
     Output('win-rate-through-time', 'figure'),
-    [Input('win-loss-exit-dates', 'modified_timestamp')],
-    [State('win-loss-exit-dates', 'data'), State('win-loss-profit-list', 'data')]
+    [Input('win-loss-exit-dates', 'modified_timestamp'), Input('win-loss-asset-dropdown', 'value')],
+    [State('win-loss-exit-dates', 'data'), State('win-loss-profit-list', 'data'), State('win-loss-asset-list', 'data')]
 )
-def update_win_rate_graph(ts, exit_dates, profit_list):
+def update_win_rate_graph(ts, selected_stock_code, unfiltered_exit_dates, unfiltered_profit_list, stock_codes):
+    if selected_stock_code is not None:
+        exit_dates, profit_list = filter_data_by_asset(selected_stock_code, stock_codes, unfiltered_exit_dates,
+                                                       unfiltered_profit_list)
+    else:
+        exit_dates = unfiltered_exit_dates
+        profit_list = unfiltered_profit_list
+
     exit_dates = [datetime.strptime(exit_date.split('T')[0], '%Y-%m-%d') for exit_date in exit_dates]
-    dated_profits = sorted([(exit_date, profit > 0) for exit_date, profit in zip(exit_dates, profit_list)])
-    first_exit_date, last_exit_date = dated_profits[0][0], dated_profits[-1][0]
+    dated_trades = construct_dated_trade_list(exit_dates, profit_list)
+    first_exit_date, last_exit_date = dated_trades[0][0], dated_trades[-1][0]
 
-    wins_to_date = 0
+    wins_to_date = num_trades = 0
     win_rate_data = []
-    num_trades = 0
-
-    for date in date_range(first_exit_date, last_exit_date):
-        if str(date) in str(dated_profits[num_trades][0]):
-            wins_to_date += 1 if dated_profits[num_trades][1] else 0
+    for date in date_range(first_exit_date, last_exit_date + timedelta(2)):
+        if num_trades < len(profit_list) and str(date) in str(dated_trades[num_trades][0]):
+            wins_to_date += 1 if dated_trades[num_trades][1] else 0
             win_rate = wins_to_date / (num_trades + 1)
             num_trades += 1
         win_rate_data.append({'Date': date, 'Win Rate': win_rate})
 
     win_rate_dataframe = pd.DataFrame(win_rate_data)
-
     win_rate_figure = px.line(win_rate_dataframe, x='Date', y='Win Rate', title='Win rate through time')
     win_rate_figure.update_yaxes(range=[-0.01, 1.01])
     return win_rate_figure
+
+
+def construct_dated_trade_list(exit_dates, profit_list):
+    return sorted([(exit_date, profit > 0) for exit_date, profit in zip(exit_dates, profit_list)])
+
+
+def filter_data_by_asset(selected_stock_code, stock_codes, unfiltered_exit_dates, unfiltered_profit_list):
+    exit_dates = profit_list = []
+    for stock_id, code in enumerate(stock_codes):
+        if code == selected_stock_code:
+            exit_dates.append(unfiltered_exit_dates[stock_id])
+            profit_list.append(unfiltered_profit_list[stock_id])
+
+    return exit_dates, profit_list
+
+
+@app.callback(
+    Output('win-loss-asset-dropdown', 'options'),
+    [Input('win-loss-asset-list', 'modified_timestamp')],
+    [State('win-loss-asset-list', 'data')]
+)
+def update_asset_dropdown(ts, asset_list):
+    asset_options = [{'label': asset_name, 'value': asset_name} for asset_name in asset_list]
+    return asset_options

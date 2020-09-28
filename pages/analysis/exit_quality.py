@@ -109,7 +109,6 @@ def update_output(start_date, end_date, full_period, within_one_day, within_one_
 
     sorted_stock_closes = sorted(stock_data['Close'], reverse=True)
     max_close = round(sorted_stock_closes[0], 2)
-    min_close = round(sorted_stock_closes[-1], 2)
 
     actual_return = ((sell_price - buy_price) / buy_price) * 100
     max_return = ((max_close - buy_price) / buy_price) * 100

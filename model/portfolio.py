@@ -6,8 +6,6 @@ class Portfolio:
     def __init__(self, trades_list):
         self.trade_list = trades_list
         self.create_profit_list()
-        self.find_total_amount_traded()
-        self.find_total_exit_amount()
 
     def find_total_amount_traded(self):
         self.total_amount_traded = sum([trade.buy_price * trade.number_of_shares for trade in self.trade_list])
