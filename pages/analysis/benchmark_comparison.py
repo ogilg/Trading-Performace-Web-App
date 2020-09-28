@@ -16,8 +16,6 @@ page.set_path('/analysis/benchmark-comparison')
 
 page.set_storage(['asset-list'])
 
-asset_dropdown = dcc.Dropdown(id='asset-dropdown', multi=False)
-
 page.set_layout([
     html.H1(
         page.name,

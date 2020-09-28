@@ -13,7 +13,7 @@ from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchm
 
 pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, trade_journal]
 analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality]
-analysis_pages_building = [overview, win_loss, benchmark_comparison]
+analysis_pages_building = [overview, win_loss, benchmark_comparison, exit_quality]
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
@@ -82,7 +82,7 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     exit_dates = [trade.exit_date for trade in portfolio.trade_list]
 
     asset_list = portfolio.get_asset_list_from_trades()
-    return [profit, rate_of_return, aggregate_profit_by_day.to_dict(), profit_list, exit_dates, asset_list]
+    return [profit, rate_of_return, aggregate_profit_by_day.to_dict(), profit_list, exit_dates, asset_list, asset_list]
 
 
 if __name__ == "__main__":
