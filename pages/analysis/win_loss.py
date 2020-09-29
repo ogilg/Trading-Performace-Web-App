@@ -54,7 +54,7 @@ page.set_layout([
 
     dcc.Graph(
         id='win-rate-through-time',
-    ),]
+    ), ]
 )
 
 

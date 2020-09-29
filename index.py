@@ -2,18 +2,19 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from model.return_metrics import calculate_rate_of_return
 
 from app import app
+from model.portfolio import Portfolio
+from model.return_metrics import calculate_rate_of_return
+from model.trade import Trade
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
-from model.trade import Trade
-from model.portfolio import Portfolio
 from pages import trade_journal
-from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchmark_comparison, create_storage
+from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchmark_comparison, create_storage, \
+    diversification
 
-pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, trade_journal]
-analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality]
+pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification, trade_journal]
+analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification]
 
 
 # the styles for the main content position it to the right of the sidebar and
@@ -90,9 +91,11 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     buy_price_dict = {trade.asset_name : trade.buy_price for trade in portfolio.trade_list}
     sell_price_dict = {trade.asset_name : trade.sell_price for trade in portfolio.trade_list}
 
+
+
     return [profit_list, rate_of_return, aggregate_profit_by_day.to_dict(), total_amount_traded, profit_list, \
             exit_dates, asset_list, asset_list, asset_list, entry_dates, exit_dates, number_of_shares, asset_list, \
-            buy_price_dict, sell_price_dict]
+            buy_price_dict, sell_price_dict, asset_list]
 
 
 if __name__ == "__main__":

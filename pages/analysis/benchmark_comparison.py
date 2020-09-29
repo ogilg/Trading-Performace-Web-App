@@ -6,9 +6,9 @@ import plotly.graph_objects as go
 import yfinance as yf
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 
 from app import app
+from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
 page = Page('Benchmark-Comparison')

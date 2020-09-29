@@ -1,8 +1,10 @@
-from model.return_metrics import calculate_rate_of_return
-import yfinance as yf
 from datetime import datetime
+
 import pandas as pd
+import yfinance as yf
+
 from model.date_utils import date_range
+from model.return_metrics import calculate_rate_of_return
 
 
 class Trade:

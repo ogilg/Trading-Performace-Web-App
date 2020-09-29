@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
@@ -32,7 +31,6 @@ exit_quality_fig.add_trace(go.Indicator(
     mode="gauge+number+delta",
     title={'text': "Exit quality"},
     gauge=exit_quality_gauge))
-
 
 gauge_layout = html.Div([
     dcc.DatePickerRange(
@@ -99,6 +97,7 @@ def update_exit_quality_indicator(start_date, end_date, stock_code, buy_price_di
         gauge=exit_quality_gauge
     ))
     return exit_quality_fig
+
 
 @app.callback(
     Output('exit-quality-asset-dropdown', 'options'),
