@@ -14,7 +14,7 @@ from pages.page import Page
 
 page = Page("Exit-Quality")
 page.set_path('/pages/exit_quality')
-page.set_storage(['asset-list'])
+page.set_storage(['asset-list', 'buy-price-dict', 'sell-price-dict'])
 
 exit_quality_gauge = {'axis': {'range': [-100, 100]},
                       'bar': {'color': 'black'},
@@ -68,16 +68,17 @@ page.layout = [
     Output('exit-quality-indicator', 'figure'),
     [Input('date-picker', 'start_date'),
      Input('date-picker', 'end_date'),
-     Input('exit-quality-asset-dropdown', 'value')]
+     Input('exit-quality-asset-dropdown', 'value')],
+    [State(page.id + '-buy-price-dict', 'data'), State(page.id + '-sell-price-dict', 'data')]
 )
-def update_exit_quality_indicator(start_date, end_date, stock_code):
+def update_exit_quality_indicator(start_date, end_date, stock_code, buy_price_dict, sell_price_dict):
     if stock_code is None:
         raise PreventUpdate
     start_date = datetime.strptime(start_date.split('T')[0], '%Y-%m-%d')
     end_date = datetime.strptime(end_date.split('T')[0], '%Y-%m-%d')
 
-    sell_price = 90
-    buy_price = 100
+    sell_price = sell_price_dict[stock_code]
+    buy_price = buy_price_dict[stock_code]
 
     stock_data = yf.download(stock_code, start=start_date, end=end_date)
 
