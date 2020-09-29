@@ -8,7 +8,7 @@ from pages.page import Page
 
 page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
-page.set_storage(['asset-list', 'entry-dates', 'exit-dates', 'number-of-shares'])
+page.set_storage(['asset-list', 'buy-price-dict', 'sell-price-dict', 'number-of-shares'])
 
 page.set_layout([
     html.H1(
@@ -26,10 +26,11 @@ page.set_layout([
 # @app.callback(
 #     [Output()], # add output
 #     [Input('-'.join((page.id, 'entry-dates')), 'modified_timestamp')],
-#     [State('-'.join((page.id, 'asset-list')), 'data'), State('-'.join((page.id, 'entry-dates')), 'data'),State('-'.join((page.id, 'exit-dates')), 'data'),State('-'.join((page.id, 'number-of-shares')), 'data')]
+#     [State('-'.join((page.id, 'asset-list')), 'data'), State('-'.join((page.id, 'buy-price-dict')), 'data'),State('-'.join((page.id, 'sell-price-dict')), 'data'),State('-'.join((page.id, 'number-of-shares')), 'data')]
 # )
-# def update_risk_metrics(timestamp, asset_list, entry_dates, exit_dates, number_of_shares):
+# def update_risk_metrics(timestamp, asset_list, buy_price_dict, sell_price_dict, number_of_shares):
 #     #TODO: add risk adjusted ratio figures
+#     buy_price = buy_price_dict['AAPL'] for example
 #     raise PreventUpdate
 #     return
 

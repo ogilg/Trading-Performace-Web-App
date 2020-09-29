@@ -83,7 +83,6 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     aggregate_profit_by_day = portfolio.calculate_aggregate_profit_by_day().reset_index()
 
     exit_dates = [trade.exit_date for trade in portfolio.trade_list]
-    entry_dates = [trade.entry_date for trade in portfolio.trade_list]
     number_of_shares = [trade.number_of_shares for trade in portfolio.trade_list]
 
     asset_list = portfolio.get_asset_list_from_trades()
@@ -94,7 +93,7 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
 
 
     return [profit_list, rate_of_return, aggregate_profit_by_day.to_dict(), total_amount_traded, profit_list, \
-            exit_dates, asset_list, asset_list, asset_list, entry_dates, exit_dates, number_of_shares, asset_list, \
+            exit_dates, asset_list, asset_list, asset_list, buy_price_dict, sell_price_dict, number_of_shares, asset_list, \
             buy_price_dict, sell_price_dict, asset_list]
 
 
