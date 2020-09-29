@@ -67,9 +67,10 @@ def update_asset_dropdown(ts, asset_list):
 def update_output(start_date, end_date, stock_code):
     try:
         stock_ticker = yf.Ticker(stock_code)
+        stock_info = stock_ticker.info
     except AttributeError:
         raise PreventUpdate
-    stock_info = stock_ticker.info
+
 
     df_stock = yf.download(tickers=stock_code, start=start_date, end=end_date, auto_adjust=False)
     df_index = yf.download(tickers='^GSPC', start=start_date, end=end_date, auto_adjust=False)

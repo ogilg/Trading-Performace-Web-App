@@ -11,9 +11,9 @@ def calculate_sortino_ratio(rate_of_return, risk_free_rate_of_return, downside_r
 
 def calculate_treynor_ratio(rate_of_return, risk_free_rate_of_return, beta):
     treynor_ratio = (rate_of_return - risk_free_rate_of_return) / beta
-    return treynor_ratio
+    return round(treynor_ratio, 2)
 
 
 def calculate_calmar_ratio(rate_of_return, max_drawdown):
     calmar_ratio = rate_of_return / max_drawdown
-    return calmar_ratio
+    return round(calmar_ratio,2)

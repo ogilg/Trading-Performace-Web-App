@@ -17,10 +17,10 @@ page.set_path('/pages/exit_quality')
 page.set_storage(['asset-list'])
 
 exit_quality_gauge = {'axis': {'range': [-100, 100]},
-                      'bar': {'color': "black"},
+                      'bar': {'color': 'black'},
                       'steps': [
-                          {'range': [-100, 0], 'color': "red"},
-                          {'range': [0, 50], 'color': "orange"},
+                          {'range': [-100, 0], 'color': 'red'},
+                          {'range': [0, 50], 'color': 'orange'},
                           {'range': [50, 75], 'color': 'green'},
                           {'range': [75, 100], 'color': 'darkgreen'}],
                       }
@@ -33,23 +33,12 @@ exit_quality_fig.add_trace(go.Indicator(
     title={'text': "Exit quality"},
     gauge=exit_quality_gauge))
 
+
 gauge_layout = html.Div([
-    # maybe remove buttons since date picker makes them redundant
-    html.Button('Within period', id='full-period', n_clicks=0),
-    html.Br(),
-    html.Button('Within 1 day of period', id='within-one-day', n_clicks=0, className='button'),
-    html.Br(),
-    html.Button('Within 1 week of period', id='within-one-week', n_clicks=0, className='button'),
-    html.Br(),
-    html.Button('Within 1 month of period', id='within-one-month', n_clicks=0, className='button'),
-
-    html.Br(),
-    html.Br(),
-
     dcc.DatePickerRange(
-        id='my-date-picker-range',  # ID to be used for callback
-        max_date_allowed=datetime.today(),  # maximum date allowed on the DatePickerRange component
-        initial_visible_month=datetime.today(),  # the month initially presented when the user opens the calendar
+        id='date-picker',
+        max_date_allowed=datetime.today(),
+        initial_visible_month=datetime.today(),
         start_date=(datetime.today() - timedelta(30)).date(),
         end_date=datetime.today().date(),
         display_format='MMM Do, YY',
@@ -58,6 +47,7 @@ gauge_layout = html.Div([
         updatemode='bothdates',
 
     ),
+    html.Br(),
     dcc.Graph(id='exit-quality-indicator', figure=exit_quality_fig)
 
 ])
@@ -76,31 +66,15 @@ page.layout = [
 
 @app.callback(
     Output('exit-quality-indicator', 'figure'),
-    [Input('my-date-picker-range', 'start_date'),
-     Input('my-date-picker-range', 'end_date'),
-     Input('full-period', 'n_clicks'),
-     Input('within-one-day', 'n_clicks'),
-     Input('within-one-week', 'n_clicks'),
-     Input('within-one-month', 'n_clicks'),
+    [Input('date-picker', 'start_date'),
+     Input('date-picker', 'end_date'),
      Input('exit-quality-asset-dropdown', 'value')]
 )
-def update_output(start_date, end_date, full_period, within_one_day, within_one_week, within_one_month, stock_code):
+def update_exit_quality_indicator(start_date, end_date, stock_code):
     if stock_code is None:
         raise PreventUpdate
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     start_date = datetime.strptime(start_date.split('T')[0], '%Y-%m-%d')
     end_date = datetime.strptime(end_date.split('T')[0], '%Y-%m-%d')
-    if 'full-period' in changed_id:
-        pass
-    elif 'within-one-day' in changed_id:
-        start_date = start_date - timedelta(1)
-        end_date = end_date + timedelta(1)
-    elif 'within-one-week' in changed_id:
-        start_date = start_date - timedelta(7)
-        end_date = end_date + timedelta(7)
-    elif 'within-one-month' in changed_id:
-        start_date = start_date - timedelta(30)
-        end_date = end_date + timedelta(30)
 
     sell_price = 90
     buy_price = 100

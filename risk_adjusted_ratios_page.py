@@ -3,7 +3,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-
+from model.ratio_metrics import *
 import statistics
 import yfinance as yf
 import pandas as pd
@@ -14,6 +14,7 @@ import numpy as np
 #rate of return (maybe find from: number_shares * (sell_price - buy_price)...
 #portfolio gains (find all positive trades and sum them up)
 #portfolio losses (find all negative trades and sum up, in absolute value)
+
 
 stock_codes = ['MSFT', 'TSLA', 'AAPL', 'RR.L', 'BP']
 amounts = [5000, 3000, 2000, 1000, 4000]
@@ -41,7 +42,7 @@ tbill_return = tbill_price[-1] - tbill_price[0]
 us_t_bill = format(tbill_return, '.2f')
 
 # Finding the standard deviation of the EXCESS returns
-std_excess_return = numpy.std(rate_return - us_t_bill)
+std_excess_return = np.std(rate_return - us_t_bill)
 
 # Finding the beta of the portfolio
 sum_amounts = sum(amounts)
@@ -56,20 +57,20 @@ for stock_code in stock_codes:
 beta_portfolio = np.average(beta1, weights=proportions)
 
 # Finding the standard deviation of the DOWNSIDE returns
-std_downside_return = numpy.std(negative_profit_list)
+std_downside_return = np.std(negative_profit_list)
 
 
 
 ### various ratios ###
-sharpe_ratio = (rate_return - us_t_bill) / std_excess_return
-sortino_ratio = (rate_return - us_t_bill) / std_downside_return
-calmar_ratio = (rate_return - us_t_bill) / beta_portfolio
+sharpe_ratio = calculate_sharpe_ratio(rate_return, us_t_bill, std_excess_return)
+sortino_ratio = calculate_sortino_ratio(rate_return, us_t_bill, std_downside_return)
+calmar_ratio = calculate_calmar_ratio(rate_return, us_t_bill, beta_portfolio)
 gain_to_pain_ratio = portfolio_gains / abs(portfolio_losses)
 
 
 
 
-fig1 = go.Figure(go.Indicator(
+sharpe_ratio_fig = go.Figure(go.Indicator(
     domain = {'x': [0, 1], 'y': [0, 1]},
     value = sharpe_ratio,
     mode = "gauge+number+delta",
@@ -83,7 +84,7 @@ fig1 = go.Figure(go.Indicator(
                  {'range': [3,4], 'color': 'darkgreen'}],
              }))
 
-fig2 = go.Figure(go.Indicator(
+sortino_ratio_fig = go.Figure(go.Indicator(
     domain = {'x': [0, 1], 'y': [0, 1]},
     value = sortino_ratio,
     mode = "gauge+number+delta",
@@ -97,7 +98,7 @@ fig2 = go.Figure(go.Indicator(
                  {'range': [3,4], 'color': 'darkgreen'}],
              }))
 
-fig3 = go.Figure(go.Indicator(
+gain_to_pain_fig = go.Figure(go.Indicator(
     domain = {'x': [0, 1], 'y': [0, 1]},
     value = gain_to_pain_ratio,
     mode = "gauge+number+delta",
@@ -116,17 +117,17 @@ fig3 = go.Figure(go.Indicator(
 
 app = dash.Dash()
 app.layout = html.Div([
-    dcc.Graph(figure=fig1),
+    dcc.Graph(figure=sharpe_ratio_fig),
     html.Br(),
     html.Br(),
-    dcc.Graph(figure = fig2),
+    dcc.Graph(figure = sortino_ratio_fig),
     html.Br(),
     html.Br(),
-    dcc.Graph(figure=fig3)
+    dcc.Graph(figure=gain_to_pain_fig)
 
 ])
 
-app.run_server(debug=True, use_reloader=False)  # Turn off reloader if inside Jupyter
-
+if __name__ == "__main__":
+    app.run_server(debug=True, use_reloader=False)
 
 ### OR USE SUBPLOTS ON PLOLTY

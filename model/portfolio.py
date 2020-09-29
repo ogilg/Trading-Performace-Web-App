@@ -25,11 +25,6 @@ class Portfolio:
             trade.calculate_profit()
         self.profits = [trade.profit for trade in self.trade_list]
 
-    def calculate_total_profit(self):
-        total_profit = sum(self.profits)
-        assert (isinstance(total_profit, float))
-        return total_profit
-
     def get_asset_list_from_trades(self):
         asset_list = list(dict.fromkeys([trade.asset_name for trade in self.trade_list if trade.data_fetch_successful]))
         return asset_list
@@ -42,7 +37,3 @@ class Portfolio:
             aggregate_daily_profit.add(trade.daily_profits, fill_value=0)
 
         return aggregate_daily_profit
-
-    # FILTERING
-    def get_trades_by_asset(self, asset):
-        return filter(lambda trade: trade.asset == asset, self.trade_list)
