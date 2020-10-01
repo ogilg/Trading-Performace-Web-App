@@ -87,14 +87,17 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
 
     asset_list = portfolio.get_asset_list_from_trades()
 
+    #TODO: only use list to protect against several trades with same stock
     buy_price_dict = {trade.asset_name : trade.buy_price for trade in portfolio.trade_list}
     sell_price_dict = {trade.asset_name : trade.sell_price for trade in portfolio.trade_list}
+    buy_price_list = [trade.buy_price for trade in portfolio.trade_list]
+    sell_price_list = [trade.sell_price for trade in portfolio.trade_list]
 
 
 
     return [profit_list, rate_of_return, aggregate_profit_by_day.to_dict(), total_amount_traded, profit_list, \
             exit_dates, asset_list, asset_list, asset_list, buy_price_dict, sell_price_dict, number_of_shares, asset_list, \
-            buy_price_dict, sell_price_dict, asset_list]
+            buy_price_list, sell_price_list, asset_list]
 
 
 if __name__ == "__main__":

@@ -23,6 +23,14 @@ page.set_storage(['asset-list', 'buy-price-dict', 'sell-price-dict', 'number-of-
 
 ###Intermediate calculations###
 
+def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
+    total_buy_amount = 0
+    total_sell_amount = 0
+    for trade_id in range(len(buy_prices)):
+        total_buy_amount += buy_prices[trade_id] * number_of_shares[trade_id]
+        total_sell_amount += sell_prices[trade_id] * number_of_shares[trade_id]
+    return total_buy_amount, total_sell_amount
+
 #Amounts
 amounts_buy = []
 for number_share, buy_price in zip(number_of_shares,buy_price_list):
@@ -57,15 +65,19 @@ start_date = sorted_buy_dates[0]
 end_date = sorted_sell_dates[-1]
 
 
+def get_t_bill_return(start_date, end_date):
+    tbill_data = yf.Ticker('^IRX')
+    tbill = tbill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
+    tbill_price = tbill['Close']
+    t_bill_return = ((tbill_price[-1] - tbill_price[0]) / tbill_price[0]) * 100
+    return t_bill_return
+
+
 # Finding the T-Bill rate of return between the first trade and the last trade
-tbill_data = yf.Ticker('^IRX')
-tbill = tbill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
-tbill_price = tbill['Close']
-tbill_return = ((tbill_price[-1] - tbill_price[0])/tbill_price[0])*100
-us_t_bill  = tbill_return
+get_t_bill_return()
 
 # Finding the standard deviation of the EXCESS returns
-std_excess_return = np.std(one_rate_of_return - tbill_return)
+std_excess_return = np.std(one_rate_of_return - t_bill_return)
 
 # Finding the standard deviation of the DOWNSIDE returns
 neg_returns_list = [num for num in two_rate_return_first if num < 0]
