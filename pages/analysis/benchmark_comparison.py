@@ -72,32 +72,29 @@ def update_output(start_date, end_date, stock_code):
         raise PreventUpdate
 
 
-    df_stock = yf.download(tickers=stock_code, start=start_date, end=end_date, auto_adjust=False)
-    df_index = yf.download(tickers='^GSPC', start=start_date, end=end_date, auto_adjust=False)
-    df_stock = df_stock.reset_index()
-    df_index = df_index.reset_index()
-    for key in ['Open', 'High', 'Close', 'Low']:
-        df_stock[key] = df_stock[key].astype('float64')
-    for key in ['Open', 'High', 'Close', 'Low']:
-        df_index[key] = df_index[key].astype('float64')
+    df_stock = yf.download(tickers=stock_code, start=start_date, end=end_date, auto_adjust=False).reset_index()
+    stock_index_data = yf.download(tickers='^GSPC', start=start_date, end=end_date, auto_adjust=False).reset_index()
+
+    stock_close_data = df_stock['Close'].astype('float64')
+    stock_index_close_data = stock_index_data['Close'].astype('float64')
 
     benchmark_figure = go.Figure()
     benchmark_figure.add_trace(go.Scatter(
         x=df_stock['Date'],
-        y=((df_stock['Close'] - df_stock['Close'][0]) / df_stock['Close'][0]) * 100,
+        y=((stock_close_data - stock_close_data[0]) / stock_close_data[0]) * 100,
         name=f"{stock_code.upper()}"
     ))
 
     benchmark_figure.add_trace(go.Scatter(
-        x=df_index['Date'],
-        y=((df_index['Close'] - df_index['Close'][0]) / df_index['Close'][0]) * 100,
+        x=stock_index_data['Date'],
+        y=((stock_index_close_data - stock_index_close_data[0]) / stock_index_close_data[0]) * 100,
         name="S&P500"
     ))
 
     benchmark_figure.add_trace(go.Scatter(
         x=df_stock['Date'],
         y=((df_stock['Close'] - df_stock['Close'][0]) / df_stock['Close'][0]) * 100 - (
-                (df_index['Close'] - df_index['Close'][0]) / df_index['Close'][0]) * 100,
+                (stock_index_close_data - stock_index_close_data[0]) / stock_index_close_data[0]) * 100,
         name="Comparison"
     ))
 
