@@ -1,5 +1,6 @@
 import dash_html_components as html
 import numpy as np
+import yfinance as yf
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
@@ -11,7 +12,7 @@ from pages.page import Page
 
 page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
-page.set_storage(['asset-list', 'buy-price-dict', 'sell-price-dict', 'number-of-shares'])
+page.set_storage(['asset-list', 'aggregate-profit-by-day'])
 
 page.set_layout([
     html.H1(
@@ -39,22 +40,26 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
         total_sell_amount += sell_prices[trade_id] * number_of_shares[trade_id]
     return total_buy_amount, total_sell_amount
 
+def get_t_bill_price(start_date, end_date):
+    t_bill_data = yf.Ticker('^IRX')
+    t_bill = t_bill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
+    t_bill = t_bill['Close']
+    return t_bill
+
 
 @app.callback(
-    [Output()],  # add output
+    Output('sharpe-ratio', 'children'),  # add output
     [Input('-'.join((page.id, 'entry-dates')), 'modified_timestamp')],
-    [State('-'.join((page.id, 'asset-list')), 'data'), State('-'.join((page.id, 'buy-price-list')), 'data'),
-     State('-'.join((page.id, 'sell-price-list')), 'data'), State('-'.join((page.id, 'number-of-shares')), 'data')]
+    [State('-'.join((page.id, 'asset-list')), 'data'), State('-'.join((page.id, 'aggregate-profit-by-day')), 'data')]
 )
-def update_risk_metrics(timestamp, asset_list, buy_price_list, sell_price_list, number_of_shares):
-    total_buy, total_sell = compute_total_amounts_traded(buy_price_list, sell_price_list, number_of_shares)
-    rate_of_return = calculate_rate_of_return(total_buy, total_sell)
-    t_bill_return = get_t_bill_return() # add start and end date
-    std_excess_return = np.std(rate_of_return - t_bill_return)
+def update_risk_metrics(timestamp, asset_list, aggregate_profit_by_day):
+    start_date = aggregate_profit_by_day['Date'][0]
+    end_date = aggregate_profit_by_day['Date'][-1]
+    t_bill_return = get_t_bill_price() # add start and end date
+    std_excess_return = np.std(aggregate_profit_by_day['Profit Open'] - t_bill_return)
 
 
-    for example
-        raise PreventUpdate
+    raise PreventUpdate
     return
 
 
