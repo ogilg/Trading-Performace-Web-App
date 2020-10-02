@@ -65,11 +65,11 @@ start_date = sorted_buy_dates[0]
 end_date = sorted_sell_dates[-1]
 
 
-def get_t_bill_return(start_date, end_date):
+def get_t_bill_price(start_date):
+    end_date = start_date + timedelta(1)
     tbill_data = yf.Ticker('^IRX')
     tbill = tbill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
-    tbill_price = tbill['Close']
-    t_bill_return = ((tbill_price[-1] - tbill_price[0]) / tbill_price[0]) * 100
+    t_bill_return = tbill['Close'][-1]
     return t_bill_return
 
 
