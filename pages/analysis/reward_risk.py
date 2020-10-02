@@ -44,7 +44,7 @@ def get_t_bill_price(start_date):
    end_date = start_date+timedelta(1)
     t_bill_data = yf.Ticker('^IRX')
     t_bill = t_bill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
-    t_bill = t_bill['Close'][0]
+    t_bill = t_bill['Close'][-1]
     return t_bill
 
 
