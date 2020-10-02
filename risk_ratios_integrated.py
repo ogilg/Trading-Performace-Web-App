@@ -82,7 +82,7 @@ for agg_return in aggregate_returns:
 std_excess_return = np.std(excess_returns) #Doublecheck: both must be in percent (so agg_return must be in %, as ustbill given in %)
 
 # Finding the standard deviation of the DOWNSIDE returns
-neg_returns_list = [num for num in two_rate_return_first if num < 0]
+neg_returns_list = [num for num in aggregate_returns if num < 0]
 std_downside_return = np.std(neg_returns_list)
 
 # Finding the beta of the portfolio
