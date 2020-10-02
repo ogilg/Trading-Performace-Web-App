@@ -26,13 +26,14 @@ page.set_layout([
     ),
     html.Br(),
     dcc.Graph(id='diversification-map'),
-    dcc.Graph(id='industry-pie-chart')
+    dcc.Graph(id='industry-pie-chart'),
+    dcc.Graph(id='sector-pie-chart'),
 ])
 
 
 # TODO: speed up with caching
 @app.callback(
-    [Output('diversification-map', 'figure'), Output('industry-pie-chart', 'figure')],
+    [Output('diversification-map', 'figure'), Output('industry-pie-chart', 'figure'), Output('sector-pie-chart', 'figure')],
     [Input('store-central-data', 'modified_timestamp')],
     [State(page.id + '-asset-list', 'data'), State(page.id + '-number-of-shares', 'data')]
 )
@@ -43,5 +44,6 @@ def update_asset_allocation_figures(timestamp, asset_list, number_of_shares):
     diversification_data_processor = DiversificationDataProcessor(asset_list, number_of_shares)
     map_figure = diversification_data_processor.create_country_map_figure()
     industry_data_figure = diversification_data_processor.create_industry_figure()
+    sector_figure = diversification_data_processor.create_sector_figure()
 
-    return map_figure, industry_data_figure
+    return map_figure, industry_data_figure, sector_figure

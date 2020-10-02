@@ -16,7 +16,6 @@ from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchm
 pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification, trade_journal]
 analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification]
 
-
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
@@ -80,23 +79,20 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     total_exit_amount = portfolio.find_total_exit_amount()
     rate_of_return = calculate_rate_of_return(total_amount_traded, total_exit_amount)
 
-    aggregate_profit_by_day = portfolio.calculate_aggregate_profit_by_day().reset_index().to_dict()
+    aggregate_profit_by_day = portfolio.calculate_aggregate_profit_by_day()
 
     exit_dates = [trade.exit_date for trade in portfolio.trade_list]
     number_of_shares = [trade.number_of_shares for trade in portfolio.trade_list]
 
     asset_list = portfolio.get_asset_list_from_trades()
 
-    #TODO: only use list to protect against several trades with same stock
-    buy_price_dict = {trade.asset_name : trade.buy_price for trade in portfolio.trade_list}
-    sell_price_dict = {trade.asset_name : trade.sell_price for trade in portfolio.trade_list}
+    # TODO: only use list to protect against several trades with same stock
+    buy_price_dict = {trade.asset_name: trade.buy_price for trade in portfolio.trade_list}
+    sell_price_dict = {trade.asset_name: trade.sell_price for trade in portfolio.trade_list}
 
-
-
-
-    return [profit_list, rate_of_return, aggregate_profit_by_day, total_amount_traded, profit_list, \
-            exit_dates, asset_list, asset_list, asset_list,  aggregate_profit_by_day, asset_list, buy_price_dict, sell_price_dict, asset_list, \
-            number_of_shares]
+    return [profit_list, rate_of_return, aggregate_profit_by_day, total_amount_traded, profit_list,
+            exit_dates, asset_list, asset_list, asset_list, aggregate_profit_by_day, asset_list, buy_price_dict,
+            sell_price_dict, asset_list, number_of_shares]
 
 
 if __name__ == "__main__":

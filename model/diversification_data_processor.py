@@ -17,6 +17,7 @@ class DiversificationDataProcessor:
         self.traded_amounts = []
         self.country_codes = []
         self.industries = []
+        self.sectors = []
         for trade_id in range(len(self.asset_list)):
             trade_info = TradeInformation(self.asset_list[trade_id], self.number_of_shares[trade_id])
 
@@ -25,6 +26,7 @@ class DiversificationDataProcessor:
                 trade_info.get_latest_price() * self.number_of_shares[trade_id])
 
             self.industries.append(trade_info.get_stock_info('industry') or 'Other')
+            self.sectors.append(trade_info.get_stock_info('sector') or 'Other')
         self.compute_total_amount_traded()
 
     def compute_total_amount_traded(self):
@@ -77,6 +79,16 @@ class DiversificationDataProcessor:
         industry_data_figure.update_traces(textposition='inside', textinfo='label+percent')
 
         return industry_data_figure
+
+    def create_sector_figure(self):
+        sector_data = pd.DataFrame({'Sector': self.sectors, 'Investment amount': self.traded_amounts})
+
+        sector_data_figure = px.pie(sector_data, values='Investment amount', names='Sector',
+                                      color_discrete_sequence=px.colors.sequential.RdBu,
+                                      title='Detailed asset allocation per industry')
+        sector_data_figure.update_traces(textposition='inside', textinfo='label+percent')
+
+        return sector_data_figure
 
 
 class TradeInformation:

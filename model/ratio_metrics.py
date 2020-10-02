@@ -1,12 +1,13 @@
+import numpy as np
+
 def calculate_sharpe_ratio(rate_of_return, risk_free_rate_of_return, excess_returns_std):
-    # store sharpe ratio in a class variable
-    sharpe_ratio = round((rate_of_return - risk_free_rate_of_return) / (excess_returns_std), 2)
-    return sharpe_ratio
+    sharpe_ratio = (rate_of_return - risk_free_rate_of_return) / (excess_returns_std)
+    return round(sharpe_ratio * np.sqrt(252), 2)
 
 
 def calculate_sortino_ratio(rate_of_return, risk_free_rate_of_return, downside_returns_std):
-    sortino_ratio = round((rate_of_return - risk_free_rate_of_return) / (downside_returns_std), 2)
-    return sortino_ratio
+    sortino_ratio = (rate_of_return - risk_free_rate_of_return) / (downside_returns_std)
+    return round(sortino_ratio, 2)
 
 
 def calculate_treynor_ratio(rate_of_return, risk_free_rate_of_return, beta):
@@ -16,4 +17,4 @@ def calculate_treynor_ratio(rate_of_return, risk_free_rate_of_return, beta):
 
 def calculate_calmar_ratio(rate_of_return, max_drawdown):
     calmar_ratio = rate_of_return / max_drawdown
-    return round(calmar_ratio,2)
+    return round(calmar_ratio, 2)

@@ -1,12 +1,10 @@
 import dash_html_components as html
-import numpy as np
-import yfinance as yf
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
-from datetime import
 
 from app import app
-from helper_functions.get_t_bill_price import get_t_bill_price
+from helper_functions.get_t_bill_return import get_t_bill_return
+from model.date_utils import remove_day_time
+from model.ratio_metrics import *
 from model.return_metrics import calculate_rate_of_return
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
@@ -44,18 +42,20 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
 
 @app.callback(
     Output('sharpe-ratio', 'children'),  # add output
-    [Input('-'.join((page.id, 'entry-dates')), 'modified_timestamp')],
-    [State('-'.join((page.id, 'asset-list')), 'data'), State('-'.join((page.id, 'aggregate-profit-by-day')), 'data')]
+    [Input('-'.join((page.id, 'aggregate-profit-by-day')), 'modified_timestamp')],
+    [State('-'.join((page.id, 'aggregate-profit-by-day')), 'data')]
 )
-def update_risk_metrics(timestamp, asset_list, aggregate_profit_by_day):
-    start_date = aggregate_profit_by_day['Date'][0]
-    end_date = aggregate_profit_by_day['Date'][-1]
-    t_bill_price = get_t_bill_price() # add start and end date
-    std_excess_return = np.std(aggregate_profit_by_day['Profit Open'] - t_bill_price)
+def update_risk_metrics(timestamp, aggregate_profit_by_day):
+    start_date = remove_day_time(aggregate_profit_by_day['Date'][0])
+    end_date = remove_day_time(aggregate_profit_by_day['Date'][-1])
+    t_bill_return = get_t_bill_return(start_date, end_date)  # add start and end date
+    return_std = np.std(aggregate_profit_by_day['Stock Close'])
+    portfolio_return = calculate_rate_of_return(aggregate_profit_by_day['Stock Close'][0],
+                                                aggregate_profit_by_day['Stock Close'][-1]) * 100
 
+    sharpe_ratio = calculate_sharpe_ratio(portfolio_return, t_bill_return, return_std)
 
-    raise PreventUpdate
-    return
+    return sharpe_ratio
 
 
 @app.callback(

@@ -1,4 +1,5 @@
 from model.return_metrics import calculate_rate_of_return
+import pandas as pd
 
 
 # Stores a list of trades and calculates metrics with them
@@ -31,9 +32,13 @@ class Portfolio:
 
     def calculate_aggregate_profit_by_day(self):
         for trade in self.trade_list:
-            trade.calculate_profit_by_day()
-        aggregate_daily_profit = self.trade_list[0].daily_profits
+            trade.calculate_stock_price_by_day()
+        aggregate_daily_value = self.trade_list[0].daily_close_list
         for trade in self.trade_list[1:]:
-            aggregate_daily_profit.add(trade.daily_profits, fill_value=0)
+            aggregate_daily_value.add(trade.daily_close_list, fill_value=0)
 
-        return aggregate_daily_profit
+        dates = aggregate_daily_value['Stock Close'].keys()
+        stock_close = aggregate_daily_value['Stock Close'].values
+        aggregate_daily_value = {'Date': dates, 'Stock Close': stock_close}
+
+        return aggregate_daily_value

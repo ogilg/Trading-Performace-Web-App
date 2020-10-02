@@ -12,7 +12,7 @@ page = Page('Overview')
 page.set_path('/analysis/overview')
 
 asset_list = ['ALL ASSETS', 'GOOG', 'AMZN']
-overview_metrics = ['profit-list', 'rate-of-return', 'aggregate-profit-by-day', 'total-amount-traded']
+overview_metrics = ['profit-list', 'rate-of-return', 'aggregate-value-by-day', 'total-amount-traded']
 
 page.set_storage(overview_metrics)
 
@@ -45,8 +45,7 @@ metrics = html.Div([
             ),
         ]
     ),
-    dcc.Graph(id='aggregate-daily-profit-open', ),
-    dcc.Graph(id='aggregate-daily-profit-close'),
+    dcc.Graph(id='aggregate-value-close'),
 ]
 )
 
@@ -74,7 +73,7 @@ page.set_layout([
 )
 def update_metrics(ts1, ts2, profit_list, rate_of_return, total_amount_traded):
     if profit_list is None:
-        return 'Confirm Data'
+        raise PreventUpdate
     total_profit = sum(profit_list)
     profit_factor = rate_of_return + 1
 
@@ -82,27 +81,15 @@ def update_metrics(ts1, ts2, profit_list, rate_of_return, total_amount_traded):
 
 
 @app.callback(
-    [Output("aggregate-daily-profit-open", "figure"), Output("aggregate-daily-profit-close", "figure")],
-    [Input('overview-aggregate-profit-by-day', 'modified_timestamp')],
-    [State('overview-aggregate-profit-by-day', 'data')]
+    Output("aggregate-value-close", "figure"),
+    [Input('overview-aggregate-value-by-day', 'modified_timestamp')],
+    [State('overview-aggregate-value-by-day', 'data')]
 )
-def update_aggregate_profit(ts, aggregate_daily_profit):
-    if aggregate_daily_profit is None:
+def update_aggregate_profit(ts, aggregate_value_daily):
+    if aggregate_value_daily is None:
         raise PreventUpdate
-    profit_at_open = px.line(aggregate_daily_profit, x='Date', y='Profit Open', title='Profit at Open', )
-    profit_at_close = px.line(aggregate_daily_profit, x='Date', y='Profit Close', title='Profit at Close',
-                              color_discrete_map={'Profit Close': 'red'})
-    add_line_to_figure(profit_at_close)
-    add_line_to_figure(profit_at_open)
-    return profit_at_open, profit_at_close
+    profit_at_close = px.line(aggregate_value_daily, x='Date', y='Stock Close', title='Value at Close')
+    return profit_at_close
 
 
-# output argument
-def add_line_to_figure(fig):
-    fig.update_layout(shapes=[
-        dict(
-            type='line',
-            yref='y', y0=0, y1=0,
-            xref='paper', x0=0, x1=1
-        )
-    ])
+
