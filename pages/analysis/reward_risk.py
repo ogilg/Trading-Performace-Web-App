@@ -3,9 +3,10 @@ import numpy as np
 import yfinance as yf
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from datetime import
 
 from app import app
-from helper_functions.get_t_bill_return import get_t_bill_return
+from helper_functions.get_t_bill_return import get_t_bill_price
 from model.return_metrics import calculate_rate_of_return
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
@@ -40,13 +41,6 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
         total_sell_amount += sell_prices[trade_id] * number_of_shares[trade_id]
     return total_buy_amount, total_sell_amount
 
-def get_t_bill_price(start_date):
-   end_date = start_date+timedelta(1)
-    t_bill_data = yf.Ticker('^IRX')
-    t_bill = t_bill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
-    t_bill = t_bill['Close'][-1]
-    return t_bill
-
 
 @app.callback(
     Output('sharpe-ratio', 'children'),  # add output
@@ -56,8 +50,8 @@ def get_t_bill_price(start_date):
 def update_risk_metrics(timestamp, asset_list, aggregate_profit_by_day):
     start_date = aggregate_profit_by_day['Date'][0]
     end_date = aggregate_profit_by_day['Date'][-1]
-    t_bill_return = get_t_bill_price() # add start and end date
-    std_excess_return = np.std(aggregate_profit_by_day['Profit Open'] - t_bill_return)
+    t_bill_price = get_t_bill_price() # add start and end date
+    std_excess_return = np.std(aggregate_profit_by_day['Profit Open'] - t_bill_price)
 
 
     raise PreventUpdate
