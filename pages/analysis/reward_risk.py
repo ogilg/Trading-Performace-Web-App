@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 from datetime import
 
 from app import app
-from helper_functions.get_t_bill_return import get_t_bill_price
+from helper_functions.get_t_bill_price import get_t_bill_price
 from model.return_metrics import calculate_rate_of_return
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
