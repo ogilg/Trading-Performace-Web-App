@@ -53,10 +53,10 @@ proportions = []
 sum_amounts_buy = sum(amounts_buy)
 for amount_buy in amounts_buy:
     proportions.append(amount_buy/sum_amounts_buy)
-two_rate_return_first = []
+aggregate_returns = []
 for first_rate_return, proportion in zip(first_rate_returns, proportions):
-    two_rate_return_first.append(first_rate_return*proportion)
-two_rate_return = sum(two_rate_return_first)
+    aggregate_returns.append(first_rate_return*proportion)
+two_rate_return = sum(aggregate_returns)
 
 # Finding the start and end dates
 sorted_buy_dates = buy_dates.sort()
@@ -77,7 +77,9 @@ def get_t_bill_price(start_date):
 get_t_bill_return()
 
 # Finding the standard deviation of the EXCESS returns
-std_excess_return = np.std(one_rate_of_return - t_bill_return)
+for agg_return in aggregate_returns:
+    excess_returns.append(agg_return - us_tbill)
+std_excess_return = np.std(excess_returns) #Doublecheck: both must be in percent (so agg_return must be in %, as ustbill given in %)
 
 # Finding the standard deviation of the DOWNSIDE returns
 neg_returns_list = [num for num in two_rate_return_first if num < 0]
