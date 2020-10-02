@@ -90,8 +90,7 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     #TODO: only use list to protect against several trades with same stock
     buy_price_dict = {trade.asset_name : trade.buy_price for trade in portfolio.trade_list}
     sell_price_dict = {trade.asset_name : trade.sell_price for trade in portfolio.trade_list}
-    buy_price_list = [trade.buy_price for trade in portfolio.trade_list]
-    sell_price_list = [trade.sell_price for trade in portfolio.trade_list]
+
 
 
 
