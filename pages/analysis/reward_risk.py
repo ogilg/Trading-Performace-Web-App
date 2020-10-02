@@ -40,10 +40,11 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
         total_sell_amount += sell_prices[trade_id] * number_of_shares[trade_id]
     return total_buy_amount, total_sell_amount
 
-def get_t_bill_price(start_date, end_date):
+def get_t_bill_price(start_date):
+   end_date = start_date+timedelta(1)
     t_bill_data = yf.Ticker('^IRX')
     t_bill = t_bill_data.history(start=start_date, end=end_date, interval='1d', auto_adjust=False)
-    t_bill = t_bill['Close']
+    t_bill = t_bill['Close'][-1]
     return t_bill
 
 
