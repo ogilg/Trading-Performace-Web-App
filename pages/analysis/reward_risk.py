@@ -13,6 +13,59 @@ page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
 page.set_storage(['asset-list', 'aggregate-profit-by-day'])
 
+sharpe_ratio_gauge = {'axis': {'range': [-1, 4]},
+                      'bar': {'color': 'black'},
+                      'steps': [
+                          {'range': [-1, 1], 'color': 'red'},
+                          {'range': [1, 2], 'color': 'orange'},
+                          {'range': [2, 3], 'color': 'green'},
+                          {'range': [3, 4], 'color': 'darkgreen'}],
+                      }
+
+sharpe_ratio_fig = go.Figure()
+sharpe_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Sharpe ratio"},
+    gauge=sharpe_ratio_gauge))
+
+sortino_ratio_gauge = {'axis': {'range': [-1, 4]},
+                      'bar': {'color': 'black'},
+                      'steps': [
+                          {'range': [-1, 1], 'color': 'red'},
+                          {'range': [1, 2], 'color': 'orange'},
+                          {'range': [2, 3], 'color': 'green'},
+                          {'range': [3, 4], 'color': 'darkgreen'}],
+                      }
+
+sortino_ratio_fig = go.Figure()
+sortino_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Sortino ratio"},
+    gauge=sortino_ratio_gauge))
+
+
+gain_to_pain_ratio_gauge = {'axis': {'range': [-1, 4]},
+                      'bar': {'color': 'black'},
+                      'steps': [
+                          {'range': [-1, 1], 'color': 'red'},
+                          {'range': [1, 2], 'color': 'orange'},
+                          {'range': [2, 3], 'color': 'green'},
+                          {'range': [3, 4], 'color': 'darkgreen'}],
+                      }
+
+gain_to_pain_ratio_fig = go.Figure()
+gain_to_pain_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Gain to Pain ratio"},
+    gauge=gain_to_pain_ratio_gauge))
+
+
 page.set_layout([
     html.H1(
         page.name,
