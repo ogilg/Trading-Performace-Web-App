@@ -88,7 +88,7 @@ def update_metrics(ts1, ts2, profit_list, rate_of_return, total_amount_traded):
 def update_aggregate_profit(ts, aggregate_value_daily):
     if aggregate_value_daily is None:
         raise PreventUpdate
-    profit_at_close = px.line(aggregate_value_daily, x='Date', y='Stock Close', title='Value at Close')
+    profit_at_close = px.line(aggregate_value_daily, x='Date', y='Stock Close', title='Portfolio Value at Close')
     return profit_at_close
 
 

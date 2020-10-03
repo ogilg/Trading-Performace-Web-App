@@ -90,6 +90,17 @@ class DiversificationDataProcessor:
 
         return sector_data_figure
 
+    def create_sunburst(self):
+        sunburst_data = {'sector': self.sectors, 'amount': self.traded_amounts, 'industry': self.industries, 'tickers': self.asset_list}
+        sunburst_dataframe = pd.DataFrame(sunburst_data)
+
+        sunburst_figure = px.sunburst(sunburst_dataframe, path=['sector', 'industry', 'tickers'], values='amount',
+                          color_discrete_sequence=px.colors.sequential.RdBu,
+                          title='Asset allocation overview per sector and industry')
+        sunburst_figure.update_traces(textinfo='label+percent entry')
+
+        return sunburst_figure
+
 
 class TradeInformation:
     def __init__(self, stock_code, number_of_shares):
