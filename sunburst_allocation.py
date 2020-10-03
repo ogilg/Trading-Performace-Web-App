@@ -18,11 +18,11 @@ for str in tickers:
     industry_data.append(stock.info['industry'])
 
 # Create the dataframe for use by the chart
-data = {'sector':sector_data,'amount':amount, 'industry':industry_data}
-df = pd.DataFrame(data, columns= ['sector','industry','amount'])
+data = {'sector':sector_data,'amount':amount, 'industry':industry_data, 'tickers': tickers}
+df = pd.DataFrame(data, columns= ['sector','industry','amount', 'tickers'])
 
 
-fig = px.sunburst(df,path=['sector','industry'], values='amount', color_discrete_sequence=px.colors.sequential.RdBu, title= 'Asset allocation overview per sector and industry')
+fig = px.sunburst(df,path=['sector','industry', 'tickers'], values='amount', color_discrete_sequence=px.colors.sequential.RdBu, title= 'Asset allocation overview per sector and industry')
 fig.update_traces(textinfo='label+percent entry')
 fig.show()
 
