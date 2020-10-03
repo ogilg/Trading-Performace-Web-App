@@ -100,7 +100,9 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
 
 
 @app.callback(
-    Output('sharpe-ratio', 'children'),  # add output
+    Output('sharpe_ratio_indicator', 'figure'),
+    Output('sortino_ratio_indicator', 'figure'),
+    Output('gain_to_pain_ratio_indicator','figure'),
     [Input('-'.join((page.id, 'aggregate-profit-by-day')), 'modified_timestamp')],
     [State('-'.join((page.id, 'aggregate-profit-by-day')), 'data')]
 )
@@ -113,9 +115,12 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day):
                                                 aggregate_profit_by_day['Stock Close'][-1]) * 100
 
     sharpe_ratio = calculate_sharpe_ratio(portfolio_return, t_bill_return, return_std)
+    sortino_ratio = calculate_sortino_ratio(portfolio_return, t_bill_return, negative_return_std)
+    gain_to_pain_ratio = calculate_gain_to_pain_ratio(portfolio_returns, portfolio_losses)
 
     return sharpe_ratio
-
+    return sortino_ratio
+    return gain_to_pain_ratio
 
 @app.callback(
     Output('-'.join((page.id, 'asset-dropdown')), 'options'),
