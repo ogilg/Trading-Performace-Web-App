@@ -81,6 +81,12 @@ page.set_layout([
         id="sharpe-ratio",
         className="mini_container",
     ),
+    html.Br(),
+    dcc.Graph(id='sharpe_ratio_indicator', figure =sharpe_ratio_fig),
+    html.Br(),
+    dcc.Graph(id='sortino_ratio_indicator', figure =sortino_ratio_fig),
+    html.Br(),
+    dcc.Graph(id='gain_to_pain_ratio_indicator', figure =gain_to_pain_ratio_fig),
 ])
 
 
