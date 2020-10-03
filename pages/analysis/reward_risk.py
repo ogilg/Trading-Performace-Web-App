@@ -118,9 +118,33 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day):
     sortino_ratio = calculate_sortino_ratio(portfolio_return, t_bill_return, negative_return_std)
     gain_to_pain_ratio = calculate_gain_to_pain_ratio(portfolio_returns, portfolio_losses)
 
-    return sharpe_ratio
-    return sortino_ratio
-    return gain_to_pain_ratio
+    sharpe_ratio_fig = go.Figure()
+    sharpe_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Sharpe ratio"},
+    gauge=sharpe_ratio_gauge))
+    
+    sortino_ratio_fig = go.Figure()
+    sortino_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Sortino ratio"},
+    gauge=sortino_ratio_gauge))
+    
+    gain_to_pain_ratio_fig = go.Figure()
+    gain_to_pain_ratio_fig.add_trace(go.Indicator(
+    domain={'x': [0, 1], 'y': [0, 1]},
+    value=0,
+    mode="gauge+number+delta",
+    title={'text': "Gain to Pain ratio"},
+    gauge=gain_to_pain_ratio_gauge))
+    
+    return sharpe_ratio_fig
+    return sortino_ratio_fig
+    return gain_to_pain_ratio_fig
 
 @app.callback(
     Output('-'.join((page.id, 'asset-dropdown')), 'options'),
