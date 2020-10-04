@@ -13,7 +13,7 @@ def calculate_gains_and_losses(profits):
     gains = 0
     for profit in profits:
         if profit > 0:
-            gains += profits
+            gains += profit
         else:
             losses += profit
     return gains, losses

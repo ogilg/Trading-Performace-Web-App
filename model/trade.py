@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 import yfinance as yf
 
-from model.date_utils import date_range
-from model.date_utils import remove_day_time
-from model.return_metrics import calculate_rate_of_return
+from helper_functions.date_utils import date_range
+from helper_functions.date_utils import remove_day_time
+from helper_functions.return_metrics import calculate_rate_of_return
 
 
 class Trade:
@@ -56,7 +56,7 @@ class Trade:
     def calculate_stock_price_by_day(self):
         daily_closes = []
 
-        for day in date_range(self.entry_date, self.exit_date):
+        for day in date_range(self.entry_date, self.exit_date + timedelta(1)):
             day = datetime.fromordinal(day.toordinal())
             try:
                 day_close = self.generate_trade_prices(day)

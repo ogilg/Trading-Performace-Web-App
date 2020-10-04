@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from app import app
-from model.date_utils import date_range
+from helper_functions.date_utils import date_range
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
@@ -85,6 +85,8 @@ def calculate_win_rate(profit_list):
     [State('win-loss-exit-dates', 'data'), State('win-loss-profit-list', 'data'), State('win-loss-asset-list', 'data')]
 )
 def update_win_rate_graph(ts, selected_stock_code, unfiltered_exit_dates, unfiltered_profit_list, stock_codes):
+    if unfiltered_exit_dates is None:
+        raise PreventUpdate
     if selected_stock_code is not None:
         exit_dates, profit_list = filter_data_by_asset(selected_stock_code, stock_codes, unfiltered_exit_dates,
                                                        unfiltered_profit_list)
@@ -131,5 +133,7 @@ def filter_data_by_asset(selected_stock_code, stock_codes, unfiltered_exit_dates
     [State('win-loss-asset-list', 'data')]
 )
 def update_asset_dropdown(ts, asset_list):
+    if asset_list is None:
+        raise PreventUpdate
     asset_options = [{'label': asset_name, 'value': asset_name} for asset_name in asset_list]
     return asset_options

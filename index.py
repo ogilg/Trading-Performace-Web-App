@@ -5,7 +5,7 @@ from dash.exceptions import PreventUpdate
 
 from app import app
 from model.portfolio import Portfolio
-from model.return_metrics import calculate_rate_of_return, calculate_gains_and_losses
+from helper_functions.return_metrics import calculate_rate_of_return, calculate_gains_and_losses
 from model.trade import Trade
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
@@ -52,12 +52,14 @@ def display_page(pathname):
 
 def parse_trade_data(trade_data_list):
     trades = []
+
     for trade_data in trade_data_list:
-        trade = Trade(asset_name=trade_data['STOCK CODE'], entry_date=trade_data['BUY DATE'],
-                      exit_date=trade_data['SELL DATE'], buy_price=trade_data['BUY PRICE'],
-                      number_of_shares=trade_data['NUMBER OF SHARES'])
-        if trade.data_fetch_successful:
-            trades.append(trade)
+        if len(trade_data['STOCK CODE']) > 0: # check that row is not empty
+            trade = Trade(asset_name=trade_data['STOCK CODE'], entry_date=trade_data['BUY DATE'],
+                          exit_date=trade_data['SELL DATE'], buy_price=trade_data['BUY PRICE'],
+                          number_of_shares=trade_data['NUMBER OF SHARES'])
+            if trade.data_fetch_successful:
+                trades.append(trade)
 
     portfolio = Portfolio(trades)
     return portfolio
@@ -74,12 +76,14 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     if storage_timestamp is None:
         raise PreventUpdate
     portfolio = parse_trade_data(stored_trade_data)
+    if len(portfolio.trade_list) == 0:
+        raise PreventUpdate
     profit_list = portfolio.profits
     total_amount_traded = portfolio.find_total_amount_traded()
     total_exit_amount = portfolio.find_total_exit_amount()
     rate_of_return = calculate_rate_of_return(total_amount_traded, total_exit_amount)
 
-    aggregate_profit_by_day = portfolio.calculate_aggregate_profit_by_day()
+    aggregate_value_by_day = portfolio.calculate_aggregate_value_by_day()
 
     exit_dates = [trade.exit_date for trade in portfolio.trade_list]
     number_of_shares = [trade.number_of_shares for trade in portfolio.trade_list]
@@ -91,8 +95,8 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
     buy_price_dict = {trade.asset_name: trade.buy_price for trade in portfolio.trade_list}
     sell_price_dict = {trade.asset_name: trade.sell_price for trade in portfolio.trade_list}
 
-    return [profit_list, rate_of_return, aggregate_profit_by_day, total_amount_traded, profit_list,
-            exit_dates, asset_list, asset_list, asset_list, aggregate_profit_by_day, portfolio_gains, portfolio_losses,
+    return [profit_list, rate_of_return, aggregate_value_by_day, total_amount_traded, profit_list,
+            exit_dates, asset_list, asset_list, asset_list, aggregate_value_by_day, portfolio_gains, portfolio_losses,
             asset_list, buy_price_dict, sell_price_dict, asset_list, number_of_shares]
 
 

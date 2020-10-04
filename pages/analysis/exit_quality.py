@@ -105,5 +105,7 @@ def update_exit_quality_indicator(start_date, end_date, stock_code, buy_price_di
     [State('exit-quality-asset-list', 'data')]
 )
 def update_asset_dropdown(ts, asset_list):
+    if asset_list is None:
+        raise PreventUpdate
     asset_options = [{'label': asset_name, 'value': asset_name} for asset_name in asset_list]
     return asset_options

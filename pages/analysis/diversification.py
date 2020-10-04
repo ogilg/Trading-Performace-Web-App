@@ -37,12 +37,10 @@ page.set_layout([
     [Output('diversification-map', 'figure'), Output('industry-pie-chart', 'figure'), Output('sector-pie-chart', 'figure'), Output('sunburst', 'figure')],
     [Input('store-central-data', 'modified_timestamp')],
     [State(page.id + '-asset-list', 'data'), State(page.id + '-number-of-shares', 'data')],
-    prevent_initial_call = True,
 )
 def update_asset_allocation_figures(timestamp, asset_list, number_of_shares):
     if timestamp is None:
         raise PreventUpdate
-    print('Updating asset allocation figure')
     diversification_data_processor = DiversificationDataProcessor(asset_list, number_of_shares)
     map_figure = diversification_data_processor.create_country_map_figure()
     industry_data_figure = diversification_data_processor.create_industry_figure()

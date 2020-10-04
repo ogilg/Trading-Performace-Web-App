@@ -1,18 +1,18 @@
 import base64
 import io
 
+import dash
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.exceptions import PreventUpdate
-import dash_bootstrap_components as dbc
 import dash_table
-import dash
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pages.trade_data_formatting import individual_trades_columns
+from dash.exceptions import PreventUpdate
 
 from app import app
 from pages.page import Page
+from pages.trade_data_formatting import individual_trades_columns
 
 page = Page('Trade-Journal')
 page.set_path('/pages/trade-journal')
@@ -38,9 +38,10 @@ trade_table_display = html.Div([
     html.Br(),
     html.Div([trades_table, ], ),
     dbc.Row([
-        dbc.Col([html.Button('Add Row', id='add-rows-button', n_clicks=0, style={'margin-top':'1%'})]),
-        dbc.Col([dbc.Button('Confirm Trades', color="primary", className="mr-1", style={'margin-top':'1%'}, id='confirm-data-button')],  width={'offset':3}),
-        ],
+        dbc.Col([html.Button('Add Row', id='add-rows-button', n_clicks=0, style={'margin-top': '1%'})]),
+        dbc.Col([dbc.Button('Confirm Trades', color="primary", className="mr-1", style={'margin-top': '1%'},
+                            id='confirm-data-button')], width={'offset': 3}),
+    ],
         justify='between',
     )
 ])
@@ -96,10 +97,10 @@ def parse_contents(contents, filename):
 @app.callback(
     [Output('trades-table', 'columns'), Output('trades-table', 'data')],
     [Input('upload-spreadsheet', 'contents'),
-     Input('add-rows-button', 'n_clicks'), Input('store-local-data', 'modified_timestamp')],
+     Input('add-rows-button', 'n_clicks')],
     [State('trades-table', 'data'), State('upload-spreadsheet', 'filename'), State('store-local-data', 'data')]
 )
-def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timestamp, current_trade_data,
+def update_trade_table(uploaded_spreadsheets, add_row_click, current_trade_data,
                        uploaded_filenames, stored_data):
     context = dash.callback_context
     if not context.triggered:
@@ -107,7 +108,7 @@ def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timesta
     else:
         input_id = context.triggered[0]['prop_id'].split('.')[0]
 
-    if stored_data_timestamp is not None and stored_data is not None:
+    if stored_data is not None:
         current_trade_data = stored_data
     else:
         current_trade_data = current_trade_data or [{c['id']: '' for c in individual_trades_columns}]
@@ -126,17 +127,17 @@ def update_trade_table(uploaded_spreadsheets, add_row_click, stored_data_timesta
 
 
 def get_columns_from_dicts(dicts):
+    # if len(dicts) == 0:
+    #     return []
     return [{'name': str(i), 'id': str(i)} for i in dicts[0]]
 
 
 @app.callback(
     Output('store-local-data', 'data'),
-    [Input('trades-table', 'data_timestamp'), Input('upload-spreadsheet', 'contents'),
-     Input('add-rows-button', 'n_clicks')],
-    [State('trades-table', 'data')]
+    [Input('trades-table', 'data')]
 )
-def update_store(update_stored_data, uploaded_trigger, add_row_click, table_data):
-    if update_stored_data is None and uploaded_trigger is None:
+def update_store(table_data):
+    if trades_table is None:
         raise PreventUpdate
     return table_data
 

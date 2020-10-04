@@ -54,6 +54,8 @@ page.set_layout([
     [State('benchmark-comparison-asset-list', 'data')]
 )
 def update_asset_dropdown(ts, asset_list):
+    if asset_list is None:
+        raise PreventUpdate
     asset_options = [{'label': asset_name, 'value': asset_name} for asset_name in asset_list]
     return asset_options
 
@@ -95,14 +97,14 @@ def update_output(start_date, end_date, stock_code):
         x=df_stock['Date'],
         y=((df_stock['Close'] - df_stock['Close'][0]) / df_stock['Close'][0]) * 100 - (
                 (stock_index_close_data - stock_index_close_data[0]) / stock_index_close_data[0]) * 100,
-        name="Comparison"
+        name="Difference"
     ))
 
     stock_name = stock_info['shortName']
     benchmark_figure.update_layout(
         xaxis_rangeslider_visible=False,
         title={
-            'text': f'{stock_name.upper()} relative comparison with the S&P500',
+            'text': f'{stock_name.upper()} vs S&P500',
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',

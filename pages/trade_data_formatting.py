@@ -1,17 +1,17 @@
 from dash_table.Format import Format, Scheme, Sign, Symbol
 
 individual_trades_columns = [{
-    'id': 'STOCK_CODE',
-    'name': 'Stock code',
+    'id': 'STOCK CODE',
+    'name': 'STOCK CODE',
     'type': 'text'
 }, {
-    'id': 'BUY_DATE',
-    'name': 'Buy date (YYYY-MM-DD)',
+    'id': 'BUY DATE',
+    'name': 'BUY DATE (YYYY-MM-DD)',
     'type': 'datetime'
 },
     {
-        'id': 'BUY_PRICE',
-        'name': u'Buy Price',
+        'id': 'BUY PRICE',
+        'name': u'BUY PRICE',
         'type': 'numeric',
         'format': Format(
             nully='N/A',
@@ -29,12 +29,12 @@ individual_trades_columns = [{
             'default': None
         }
     }, {
-        'id': 'SELL_DATE',
-        'name': 'Sell date (YYYY-MM-DD)',
+        'id': 'SELL DATE',
+        'name': 'SELL DATE (YYYY-MM-DD)',
         'type': 'datetime',
     }, {
-        'id': 'SELL_PRICE',
-        'name': u'Sell price',
+        'id': 'SELL PRICE',
+        'name': u'SELL PRICE',
         'type': 'numeric',
         'format': Format(
             nully='N/A',
@@ -51,4 +51,15 @@ individual_trades_columns = [{
         'validation': {
             'default': None
         }
+    },
+    {
+        'id': 'NUMBER OF SHARES',
+        'name': 'NUMBER OF SHARES',
+        'type': 'numeric',
+        'format': Format(
+            nully='N/A',
+            precision=2,
+            scheme=Scheme.fixed,
+        ),
+
     }]

@@ -9,7 +9,8 @@ from pages.analysis import overview
 
 class NavBar:
     def __init__(self):
-        self.create_search_bar()
+        #self.create_search_bar()
+        pass
 
     def set_main_pages(self, main_pages):
         # dict with name to display and Page object
@@ -25,19 +26,19 @@ class NavBar:
             ))
         return self.columns
 
-    def create_search_bar(self):
-        self.search_bar = dbc.Row(
-            [
-                dbc.Col(dbc.Input(type="search", placeholder="Search")),
-                dbc.Col(
-                    dbc.Button("Search", color="primary", className="ml-2"),
-                    width="auto",
-                ),
-            ],
-            no_gutters=True,
-            className="ml-auto flex-nowrap mt-3 mt-md-0",
-            align="center",
-        )
+    # def create_search_bar(self):
+    #     self.search_bar = dbc.Row(
+    #         [
+    #             dbc.Col(dbc.Input(type="search", placeholder="Search")),
+    #             dbc.Col(
+    #                 dbc.Button("Search", color="primary", className="ml-2"),
+    #                 width="auto",
+    #             ),
+    #         ],
+    #         no_gutters=True,
+    #         className="ml-auto flex-nowrap mt-3 mt-md-0",
+    #         align="center",
+    #     )
 
     def create_layout(self):
         columns = self.create_columns()
@@ -55,7 +56,6 @@ class NavBar:
                     ),
                 ),
                 dbc.NavbarToggler(id="navbar-toggler"),
-                dbc.Collapse(self.search_bar, id="navbar-collapse", navbar=True),
             ],
             color="dark",
             dark=True,
