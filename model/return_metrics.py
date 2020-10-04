@@ -3,8 +3,7 @@ def calculate_rate_of_return(buy_price, sell_price):
     return rate_of_return
 
 
-def calculate_gain_to_pain(profits):
-    gains, losses = calculate_gains_and_losses(profits)
+def calculate_gain_to_pain(gains, losses):
     gain_to_pain = gains / abs(losses)
     return gain_to_pain
 

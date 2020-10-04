@@ -32,11 +32,12 @@ page.set_layout([
 ])
 
 
-# TODO: speed up with caching
+# TODO: speed up with caching and prevent initial call
 @app.callback(
     [Output('diversification-map', 'figure'), Output('industry-pie-chart', 'figure'), Output('sector-pie-chart', 'figure'), Output('sunburst', 'figure')],
     [Input('store-central-data', 'modified_timestamp')],
-    [State(page.id + '-asset-list', 'data'), State(page.id + '-number-of-shares', 'data')]
+    [State(page.id + '-asset-list', 'data'), State(page.id + '-number-of-shares', 'data')],
+    prevent_initial_call = True,
 )
 def update_asset_allocation_figures(timestamp, asset_list, number_of_shares):
     if timestamp is None:

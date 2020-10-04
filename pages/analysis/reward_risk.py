@@ -1,17 +1,19 @@
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+import plotly.graph_objects as go
+import dash_core_components as dcc
 
 from app import app
 from helper_functions.get_t_bill_return import get_t_bill_return
 from model.date_utils import remove_day_time
 from model.ratio_metrics import *
-from model.return_metrics import calculate_rate_of_return
+from model.return_metrics import calculate_rate_of_return, calculate_gain_to_pain
 from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
 page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
-page.set_storage(['asset-list', 'aggregate-profit-by-day'])
+page.set_storage(['asset-list', 'aggregate-profit-by-day', 'portfolio-gains', 'portfolio-losses'])
 
 sharpe_ratio_gauge = {'axis': {'range': [-1, 4]},
                       'bar': {'color': 'black'},
@@ -100,13 +102,15 @@ def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
 
 
 @app.callback(
-    Output('sharpe_ratio_indicator', 'figure'),
+    [Output('sharpe_ratio_indicator', 'figure'),
     Output('sortino_ratio_indicator', 'figure'),
-    Output('gain_to_pain_ratio_indicator','figure'),
+    Output('gain_to_pain_ratio_indicator','figure')],
     [Input('-'.join((page.id, 'aggregate-profit-by-day')), 'modified_timestamp')],
-    [State('-'.join((page.id, 'aggregate-profit-by-day')), 'data')]
+    [State('-'.join((page.id, 'aggregate-profit-by-day')), 'data'),
+     State('-'.join((page.id, 'portfolio-gains')), 'data'),
+     State('-'.join((page.id, 'portfolio-losses')), 'data'),]
 )
-def update_risk_metrics(timestamp, aggregate_profit_by_day):
+def update_risk_metrics(timestamp, aggregate_profit_by_day, portfolio_gains, portfolio_losses):
     start_date = remove_day_time(aggregate_profit_by_day['Date'][0])
     end_date = remove_day_time(aggregate_profit_by_day['Date'][-1])
     t_bill_return = get_t_bill_return(start_date, end_date)  # add start and end date
@@ -116,12 +120,12 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day):
 
     sharpe_ratio = calculate_sharpe_ratio(portfolio_return, t_bill_return, return_std)
     sortino_ratio = calculate_sortino_ratio(portfolio_return, t_bill_return, negative_return_std)
-    gain_to_pain_ratio = calculate_gain_to_pain_ratio(portfolio_returns, portfolio_losses)
+    gain_to_pain_ratio = calculate_gain_to_pain(portfolio_gains, portfolio_losses)
 
     sharpe_ratio_fig = go.Figure()
     sharpe_ratio_fig.add_trace(go.Indicator(
     domain={'x': [0, 1], 'y': [0, 1]},
-    value=0,
+    value=sharpe_ratio,
     mode="gauge+number+delta",
     title={'text': "Sharpe ratio"},
     gauge=sharpe_ratio_gauge))
@@ -129,7 +133,7 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day):
     sortino_ratio_fig = go.Figure()
     sortino_ratio_fig.add_trace(go.Indicator(
     domain={'x': [0, 1], 'y': [0, 1]},
-    value=0,
+    value=sortino_ratio,
     mode="gauge+number+delta",
     title={'text': "Sortino ratio"},
     gauge=sortino_ratio_gauge))
@@ -137,14 +141,12 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day):
     gain_to_pain_ratio_fig = go.Figure()
     gain_to_pain_ratio_fig.add_trace(go.Indicator(
     domain={'x': [0, 1], 'y': [0, 1]},
-    value=0,
+    value=gain_to_pain_ratio,
     mode="gauge+number+delta",
     title={'text': "Gain to Pain ratio"},
     gauge=gain_to_pain_ratio_gauge))
     
-    return sharpe_ratio_fig
-    return sortino_ratio_fig
-    return gain_to_pain_ratio_fig
+    return sharpe_ratio_fig, sortino_ratio_fig, gain_to_pain_ratio_fig
 
 @app.callback(
     Output('-'.join((page.id, 'asset-dropdown')), 'options'),

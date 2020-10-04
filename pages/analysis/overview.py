@@ -83,7 +83,8 @@ def update_metrics(ts1, ts2, profit_list, rate_of_return, total_amount_traded):
 @app.callback(
     Output("aggregate-value-close", "figure"),
     [Input('overview-aggregate-value-by-day', 'modified_timestamp')],
-    [State('overview-aggregate-value-by-day', 'data')]
+    [State('overview-aggregate-value-by-day', 'data')],
+    prevent_initial_call=True,
 )
 def update_aggregate_profit(ts, aggregate_value_daily):
     if aggregate_value_daily is None:
