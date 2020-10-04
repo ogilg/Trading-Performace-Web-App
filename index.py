@@ -4,8 +4,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from app import app
-from model.portfolio import Portfolio
 from helper_functions.return_metrics import calculate_rate_of_return, calculate_gains_and_losses
+from model.portfolio import Portfolio
 from model.trade import Trade
 from page_navigation.navbar import navbar
 from page_navigation.sidebar import sidebar
@@ -43,7 +43,7 @@ def toggle_active_links(pathname):
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        return html.P("Choose a page")
+        return trade_journal.page.layout
     for page_name in pages:
         if page_name.page.path == pathname:
             return page_name.page.layout

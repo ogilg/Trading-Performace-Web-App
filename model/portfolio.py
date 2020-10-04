@@ -35,7 +35,6 @@ class Portfolio:
         aggregate_daily_value = self.trade_list[0].daily_close_list
         for trade in self.trade_list[1:]:
             aggregate_daily_value = aggregate_daily_value.add(trade.daily_close_list, fill_value=0)
-            print('filling')
 
         dates = aggregate_daily_value['Stock Close'].keys()
         stock_close = aggregate_daily_value['Stock Close'].values

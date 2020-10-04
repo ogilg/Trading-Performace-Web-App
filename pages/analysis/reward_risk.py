@@ -5,11 +5,10 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from app import app
-from helper_functions.get_t_bill_return import get_t_bill_return
 from helper_functions.date_utils import remove_day_time
+from helper_functions.get_t_bill_return import get_t_bill_return
 from helper_functions.ratio_metrics import *
 from helper_functions.return_metrics import calculate_rate_of_return, calculate_gain_to_pain
-from pages.analysis.asset_mode_dropdown import generate_analysis_mode_dropdown
 from pages.page import Page
 
 page = Page("Reward-Risk")
