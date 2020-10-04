@@ -117,6 +117,9 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day, portfolio_gains, por
     return_std = np.std(aggregate_profit_by_day['Stock Close'])
     portfolio_return = calculate_rate_of_return(aggregate_profit_by_day['Stock Close'][0],
                                                 aggregate_profit_by_day['Stock Close'][-1]) * 100
+    neg_returns_list = [num for num in aggregate_profit_by_day['Stock Close'] if num < 0]
+    std_downside_return = np.std(neg_returns_list)
+
 
     sharpe_ratio = calculate_sharpe_ratio(portfolio_return, t_bill_return, return_std)
     sortino_ratio = calculate_sortino_ratio(portfolio_return, t_bill_return, negative_return_std)
