@@ -15,14 +15,14 @@ page = Page("Reward-Risk")
 page.set_path('/pages/reward_risk')
 page.set_storage(['asset-list', 'aggregate-profit-by-day', 'portfolio-gains', 'portfolio-losses'])
 
-sharpe_ratio_gauge = {'axis': {'range': [-1, 4]},
+default_gauge = {'axis': {'range': [-1, 4]},
                       'bar': {'color': 'black'},
                       'steps': [
                           {'range': [-1, 1], 'color': 'red'},
                           {'range': [1, 2], 'color': 'orange'},
                           {'range': [2, 3], 'color': 'green'},
                           {'range': [3, 4], 'color': 'darkgreen'}],
-                      }
+                 }
 
 sharpe_ratio_fig = go.Figure()
 sharpe_ratio_fig.add_trace(go.Indicator(
@@ -30,16 +30,9 @@ sharpe_ratio_fig.add_trace(go.Indicator(
     value=0,
     mode="gauge+number+delta",
     title={'text': "Sharpe ratio"},
-    gauge=sharpe_ratio_gauge))
+    gauge=default_gauge))
 
-sortino_ratio_gauge = {'axis': {'range': [-1, 4]},
-                      'bar': {'color': 'black'},
-                      'steps': [
-                          {'range': [-1, 1], 'color': 'red'},
-                          {'range': [1, 2], 'color': 'orange'},
-                          {'range': [2, 3], 'color': 'green'},
-                          {'range': [3, 4], 'color': 'darkgreen'}],
-                      }
+
 
 sortino_ratio_fig = go.Figure()
 sortino_ratio_fig.add_trace(go.Indicator(
@@ -47,17 +40,9 @@ sortino_ratio_fig.add_trace(go.Indicator(
     value=0,
     mode="gauge+number+delta",
     title={'text': "Sortino ratio"},
-    gauge=sortino_ratio_gauge))
+    gauge=default_gauge))
 
 
-gain_to_pain_ratio_gauge = {'axis': {'range': [-1, 4]},
-                      'bar': {'color': 'black'},
-                      'steps': [
-                          {'range': [-1, 1], 'color': 'red'},
-                          {'range': [1, 2], 'color': 'orange'},
-                          {'range': [2, 3], 'color': 'green'},
-                          {'range': [3, 4], 'color': 'darkgreen'}],
-                      }
 
 gain_to_pain_ratio_fig = go.Figure()
 gain_to_pain_ratio_fig.add_trace(go.Indicator(
@@ -65,7 +50,7 @@ gain_to_pain_ratio_fig.add_trace(go.Indicator(
     value=0,
     mode="gauge+number+delta",
     title={'text': "Gain to Pain ratio"},
-    gauge=gain_to_pain_ratio_gauge))
+    gauge=default_gauge))
 
 
 page.set_layout([
@@ -92,13 +77,6 @@ page.set_layout([
 ])
 
 
-def compute_total_amounts_traded(buy_prices, sell_prices, number_of_shares):
-    total_buy_amount = 0
-    total_sell_amount = 0
-    for trade_id in range(len(buy_prices)):
-        total_buy_amount += buy_prices[trade_id] * number_of_shares[trade_id]
-        total_sell_amount += sell_prices[trade_id] * number_of_shares[trade_id]
-    return total_buy_amount, total_sell_amount
 
 
 @app.callback(
@@ -128,7 +106,7 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day, portfolio_gains, por
     value=sharpe_ratio,
     mode="gauge+number+delta",
     title={'text': "Sharpe ratio"},
-    gauge=sharpe_ratio_gauge))
+    gauge=default_gauge))
     
     sortino_ratio_fig = go.Figure()
     sortino_ratio_fig.add_trace(go.Indicator(
@@ -136,7 +114,7 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day, portfolio_gains, por
     value=sortino_ratio,
     mode="gauge+number+delta",
     title={'text': "Sortino ratio"},
-    gauge=sortino_ratio_gauge))
+    gauge=default_gauge))
     
     gain_to_pain_ratio_fig = go.Figure()
     gain_to_pain_ratio_fig.add_trace(go.Indicator(
@@ -144,7 +122,7 @@ def update_risk_metrics(timestamp, aggregate_profit_by_day, portfolio_gains, por
     value=gain_to_pain_ratio,
     mode="gauge+number+delta",
     title={'text': "Gain to Pain ratio"},
-    gauge=gain_to_pain_ratio_gauge))
+    gauge=default_gauge))
     
     return sharpe_ratio_fig, sortino_ratio_fig, gain_to_pain_ratio_fig
 
