@@ -43,7 +43,7 @@ def toggle_active_links(pathname):
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        return html.P("Choose a page")
+        return trade_journal.page.layout
     for page_name in pages:
         if page_name.page.path == pathname:
             return page_name.page.layout
