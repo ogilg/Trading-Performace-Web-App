@@ -13,6 +13,7 @@ from pages import trade_journal
 from pages.analysis import overview, exit_quality, reward_risk, win_loss, benchmark_comparison, create_storage, \
     diversification
 
+server = app.server
 pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification, trade_journal]
 analysis_pages = [overview, win_loss, benchmark_comparison, reward_risk, exit_quality, diversification]
 
@@ -42,8 +43,6 @@ def toggle_active_links(pathname):
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/':
-        return trade_journal.page.layout
     for page_name in pages:
         if page_name.page.path == pathname:
             return page_name.page.layout
@@ -101,4 +100,4 @@ def broadcast_trade_data(storage_timestamp, stored_trade_data):
 
 
 if __name__ == "__main__":
-    app.run_server(port=8888, debug=True)
+    app.run_server(debug=True)

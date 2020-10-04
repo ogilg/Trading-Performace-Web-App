@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
-from PIL import Image
+#from PIL import Image
 
-GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
+#GAMMA_IMAGE = Image.open(r'C:\Users\oscar\PycharmProjects\Trading-Performace-Web-App\images\gamma.png')
 from pages import trade_journal
 from pages.analysis import overview
 
@@ -17,7 +17,7 @@ class NavBar:
         self.main_pages = main_pages
 
     def create_columns(self):
-        self.columns = [dbc.Col(html.A(html.Img(src=GAMMA_IMAGE, height="35px"), href="https://icons8.com", ))]
+        self.columns = []
         for main_page_key in self.main_pages:
             self.columns.append(dbc.Col(
                 dbc.NavItem(dbc.NavLink(main_page_key, href=self.main_pages[main_page_key].page.path,

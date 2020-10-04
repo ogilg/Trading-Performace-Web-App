@@ -15,7 +15,7 @@ from pages.page import Page
 from pages.trade_data_formatting import individual_trades_columns
 
 page = Page('Trade-Journal')
-page.set_path('/pages/trade-journal')
+page.set_path('/')
 
 trades_table = dash_table.DataTable(
     id='trades-table',
@@ -88,9 +88,7 @@ def parse_contents(contents, filename):
             df = pd.read_excel(io.BytesIO(decoded))
     except Exception as e:
         print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
+        return
     return df
 
 
