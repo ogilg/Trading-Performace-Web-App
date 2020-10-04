@@ -18,6 +18,8 @@ MarkupSafe==1.1.1
 multitasking==0.0.9
 numpy==1.19.2
 pandas==1.1.2
+Pillow==7.2.0
+Pillow-PIL==0.1.dev0
 plotly==4.11.0
 pycountry==20.7.3
 python-dateutil==2.8.1
